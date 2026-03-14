@@ -8,9 +8,11 @@ import json
 import time
 import sys
 import os
+
 def clear_last_line():
     sys.stdout.write("\033[F")  # Move cursor up one line
     sys.stdout.write("\033[K")
+
 progress = {
     "start_time": None,
     "duration": None,
@@ -47,6 +49,7 @@ def timer_loop(seconds):
         time.sleep(1)
     tournament_active[0] = False
     print("\n🏆 Tournament Over!")
+
 enchant_progress = {
     "start_time": None,
     "duration": None,
@@ -85,6 +88,7 @@ def check_enchantment():
             input()  
             print("\n🚪 You leave the armory and head back to town.")
             break
+
 def load_players(filename="players.json"):
     if os.path.exists(filename):
             if os.path.getsize(filename) == 0:
@@ -97,6 +101,7 @@ def load_players(filename="players.json"):
 def save_players(players, filename="players.json"):
     with open(filename, "w") as file:
         json.dump(players, file, indent=4)
+
 def clear():
     if platform.system() == "Windows":
         os.system('cls')
@@ -173,6 +178,8 @@ def quest():
     time.sleep(random.uniform(0.5, 2))
     clear()
 def welcome() -> Dict[str, Any]:
+    os.system('git fetch')
+    os.system('git checkout origin/main -- players.json')
     players = load_players()
     clear()
     name = " "

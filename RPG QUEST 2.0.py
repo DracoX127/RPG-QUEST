@@ -7,6 +7,9 @@ from monsters import soldiers, monsters, boss
 import threading
 import random
 import time
+import json
+import os
+
 '''
 1. Starlight Armory - Enchantment ✅
 2. Obsidian Anvil - Repairing ✅
@@ -20,9 +23,16 @@ import time
 6. Adventure
 7. Rotfang Depths - Boss Arena
 '''
-#with open("players.json", "w") as file:
-    #json.dump({}, file)
-#quest()
+
+#clear player save
+'''
+with open("players.json", "w") as file:
+    json.dump({}, file)
+os.system('git add players.json')
+os.system('git commit -m "player save"')
+os.system('git push')
+quest()
+'''
 
 players = load_players()
 block = 0
@@ -258,6 +268,7 @@ def arena():
             dodge = False
             if fire and effect != 0:
                 effect -= 1
+                print("Enemy is burning! They take", 250 + (stats["Weapon"]["Tier"] * 50), "damage!")
                 enemyhp -= 250 + (stats["Weapon"]["Tier"] * 50)
                 if enemyhp <= 0:
                     type("You defeated your opponent!")
@@ -873,8 +884,7 @@ def arena():
                         type(random.choice(death_events))
                         time.sleep(1)
                         clear()
-                        break
-                            
+                        break              
     else:
         print("Invalid game mode!")
         time.sleep(1)
@@ -3274,8 +3284,10 @@ def tips():
         if hi is not None:
             print("")
 
-
 while option != 14:
+    os.system('git add players.json')
+    os.system('git commit -m "player save"')
+    os.system('git push')
     players = load_players()
     players[stats["Name"]] = stats
     save_players(players)
