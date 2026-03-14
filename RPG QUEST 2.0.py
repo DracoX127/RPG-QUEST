@@ -1,13 +1,11 @@
-from game_funcs import clear_last_line, worker, start, load_players, save_players, clear, type, fasttype, chat, quest, welcome, start_enchant, check_enchantment, timer_loop
-from enchant import sword1_enchants, sword2_enchants, sword3_enchants, shield1_enchants, shield2_enchants, shield3_enchants, armor1_enchants, armor2_enchants, armor3_enchants
-from item_data import swords, elite_swords, helmets, chestplates, leggings, boots, potions
-from fish import tier1_fish, tier2_fish, tier3_fish, tier4_fish, tier5_fish
-from name_data import prefixes, middles, suffixes
-from monsters import soldiers, monsters, boss
+from typing import Any, Dict
 import threading
+import platform
+import select
 import random
 import time
 import json
+import sys
 import os
 
 '''
@@ -34,6 +32,941 @@ os.system('git push')
 quest()
 '''
 
+# =========PREFIXES, MIDDLES, SUFFIXES=========
+prefixes = [
+    "Shadow", "Iron", "Ghost", "Night", "Steel", "Storm", "Fire", "Frost", "Dragon", "Thunder",
+    "Blood", "Stone", "Dark", "Silver", "Crystal", "Wind", "Dusk", "Ember", "Flame", "Grim",
+    "Ice", "Lunar", "Mystic", "Phantom", "Razor", "Savage", "Silent", "Sky", "Solar", "Spirit",
+    "Star", "Swift", "Valkyrie", "Venom", "Void", "Wolf", "Zephyr", "Arcane", "Ash", "Bane",
+    "Beast", "Black", "Blaze", "Bright", "Chaos", "Claw", "Cold", "Cinder", "Dagger", "Death",
+    "Deep", "Dire", "Dread", "Edge", "Eternal", "Fang", "Glory", "Hawk", "Hell", "Jade",
+    "King", "Lion", "Lone", "Midnight", "Nova", "Pierce", "Rage", "Raven", "Reaper", "Smoke",
+    "Soul", "Sun", "Talon", "Tide", "Tomb", "Toxic", "Venge", "Viper", "Wraith", "Zenith",
+    "Zodiac", "Ashen", "Blight", "Brimstone", "Chrome", "Crimson", "Doom", "Echo",
+    "Feral", "Frostbite", "Gale", "Gloom", "Grave", "Hallowed", "Icefang", "Ivory",
+    "Jagged", "Keen", "Knight", "Lethal", "Magma", "Noble", "Obsidian", "Omen", "Pale",
+    "Quake", "Radiant", "Rogue", "Rune", "Seeker", "Shade", "Shattered", "Skull",
+    "Slayer", "Specter", "Spine", "Terror", "Twilight", "Umbral", "Vicious",
+    "Wild", "Wrath", "Wretched", "Corrupted", "Darkened", "Deadly", "Desolate",
+    "Enchanted", "Fierce", "Haunted", "Infernal", "Lost", "Malevolent", "Molten",
+    "Piercing", "Raging", "Sinister", "Sorrow", "Spectral", "Spellbound", "Tempered",
+    "Vengeful", "War", "Wicked", "Zealous", "Zeroth", "Abyssal", "Amber", "Aquila",
+    "Berserk", "Celestial", "Cobalt", "Crag", "Cryptic", "Dawn", "Duskborn",
+    "Ebon", "Emberglow", "Frostwind", "Gilded", "Gloomshade", "Harrow",
+    "Ironclad", "Jadefire", "Kiln", "Luminous", "Moonlit", "Nether", "Onyx", "Pyre",
+    "Quicksilver", "Runebound", "Sable", "Seismic", "Serrated", "Shard", "Silentfall",
+    "Skyfire", "Smolder", "Snowdrift", "Solaris", "Stormborn", "Sunfire", "Tempest",
+    "Thunderstrike", "Tundra", "Umber", "Voidborne", "Vortex", "Wildfire", "Winter",
+    "Wither", "Zephyrwind", "Zodiacal", "Ardent", "Aurora", "Blazing", "Boulder",
+    "Brumal", "Cinderfall", "Cloud", "Crimsonfire", "Dreadnought", "Eclipse", "Emberstorm",
+    "Frostfang", "Galeheart", "Graveborn", "Iceveil", "Ironfang", "Jaggededge",
+    "Knightfall", "Lurking", "Moonshadow", "Nighthawk", "Obsidianflame", "Phantomshade",
+    "Quartz", "Ravenwing", "Runic", "Shadowflame", "Silverwind", "Stormwatch", "Thorn",
+    "Thunderclap", "Tidebreaker", "Twilightfall", "Voidwalker", "Windshear", 
+    "Alex", "Ben", "Cara", "Dylan", "Ella", "Finn", "Grace", "Hannah", "Ian", "Jade",
+    "Kai", "Liam", "Mia", "Nina", "Owen", "Piper", "Quinn", "Rory", "Sage", "Tara",
+    "Uma", "Vera", "Will", "Xander", "Yara", "Zane", "Adam", "Bella", "Caleb", "Daisy",
+    "Eli", "Fiona", "Gavin", "Hazel", "Isaac", "Jenna", "Kara", "Leo", "Maya", "Noah",
+    "Olivia", "Paige", "Reed", "Sara", "Theo", "Violet", "Wyatt", "Zoe", "Aaron", "Bria",
+    "Cody", "Daphne", "Evan", "Faith", "Gabe", "Hailey", "Ivan", "June", "Kris", "Lara",
+    "Mark", "Nora", "Omar", "Penny", "Quincy", "Rhea", "Sean", "Tess", "Uri", "Val",
+    "Wade", "Yasmin", "Zack", "Amber", "Blake", "Cora", "Derek", "Erin", "Felix", "Gina",
+    "Holden", "Ivy", "Jack", "Kylie", "Landon", "Molly", "Nate", "Opal", "Paul", "Rose",
+    "Rylan", "Sienna", "Trent", "Una", "Vince", "Willa", "Xena", "Yosef", "Zara", "Asher",
+    "Brooke", "Colin", "Diana", "Eliot", "Freya", "Glen", "Hope", "Jesse", "Kara", "Luke",
+    "Mila", "Nash", "Olive", "Parker", "Reese", "Shay", "Toby", "Ursula", "Vance", "Wren",
+    "Xavi", "Yvette", "Zion", "Alina", "Brady", "Casey", "Dana", "Eden", "Frank", "Gia",
+    "Harry", "Isla", "Jude", "Kira", "Lila", "Miles", "Nina", "Owen", "Pia", "Quinn",
+    "Rex", "Seth", "Tia", "Vera", "West", "Yanni", "Zeke", "Aidan", "Brielle", "Craig",
+    "Delia", "Ezra", "Faye", "Gage", "Holly", "Ira", "Jillian", "Kian", "Leah", "Mason",
+    "Nyla", "Orion", "Paula", "Rhys", "Sky", "Tyler", "Ulysses", "Vivian", "Wesley",
+    "Ximena", "Yolanda", "Zander"
+]
+middles = [
+    "Slayer", "Sniper", "Blade", "Knight", "Hunter", "Rogue", "Warden", "Nomad", "Ranger", "Scout",
+    "Archer", "Berserker", "Duelist", "Lancer", "Gladiator", "Corsair", "Privateer", "Brigand", "Bandit", "Paladin",
+    "Templar", "Crusader", "Warlock", "Sorcerer", "Wizard", "Enchanter", "Pyromancer", "Juggernaut", "Colossus", "Titan",
+    "Behemoth", "Leviathan", "Kraken", "Wyrm", "Drake", "Serpent", "Centurion", "Marshal", "Captain", "Admiral",
+    "Harbinger", "Herald", "Envoy", "Emissary", "Messenger", "Trickster", "Jester", "Harrier", "Huntsman", "Pathfinder",
+    "Pioneer", "Outrider", "Rider", "Cavalier", "Dragoon", "Skirmisher", "Watcher", "Guardian", "Defender", "Protector",
+    "Bulwark", "Shield", "Hammer", "Fist", "Fang", "Claw", "Maul", "Axe", "Spear", "Bow",
+    "Arrow", "Bolt", "Blast", "Charge", "Rush", "Strike", "Smite", "Slash", "Pierce", "Sting",
+    "Bite", "Roar", "Howl", "Growl", "Snarl", "Tracker", "Packleader", "Alpha", "Scoutmaster", "Watchman",
+    "Lookout", "Sentry", "Seafarer", "Mariner", "Voyager", "Navigator", "Seeker", "Sentinel",
+    "Vanguard", "Marauder", "Reaver", "Brawler", "Prowler", "Cutter", "Striker", "Marksman", "Champion", "Keeper",
+    "Rune", "Glyph", "Sigil", "Spell", "Hex", "Curse", "Charm", "Blessing", "Altar", "Ritual",
+    "Shrine", "Totem", "Relic", "Artifact", "Talisman", "Amulet", "Ring", "Crown", "Throne", "Banner",
+    "Emblem", "Badge", "Insignia", "Mystic", "Oracle", "Beast", "Wolf", "Tiger", "Bear", "Lion",
+    "Panther", "Jaguar", "Cobra", "Viper", "Wyvern", "Basilisk", "Hydra", "Manticore", "Golem", "Elemental",
+    "Sprite", "Imp", "Demon", "Angel", "Djinn", "Nymph", "Dryad", "Specter", "Revenant", "Zombie",
+    "Skeleton", "Ghoul", "Lich", "Kappa", "Griffin", "Phoenix", "Roc", "Sword", "Dagger", "Rapier",
+    "Cutlass", "Sabre", "Mace", "Flail", "Pike", "Halberd", "Lance", "Crossbow", "Shot", "Thrust",
+    "Jab", "Stab", "Chop", "Cleave", "Crush", "Bash", "Whirl", "Spin", "Sprint", "Leap",
+    "Vault", "Dash", "Ambush", "Snipe", "Ambusher", "Cleric", "Priest", "Bard", "Minstrel", "Chronicler",
+    "Archivist", "Scribe", "Cartographer", "Beacon", "Light", "Night", "Dawn", "Dusk", "Sun", "Moon", "Star", "Tide", "Wave", "Ocean", "Reef", "Sand", "Dust", "Earth", "Stone", "Rock",
+    "Cliff", "Peak", "Vale", "Grove", "Thorn", "Ice", "Frost", "Flame", "Ember", "Blaze",
+    "Ash", "Smoke", "Gale", "Wind", "Breeze", "Zephyr", "Thunder", "Lightning", "Rain", "Snow",
+    "Hail", "Mist", "Fog", "Cloud", "Sky", "Solar", "Lunar", "Tempest", "Tundra", "Umber",
+    "Void", "James", "Marie", "Lee", "Ann", "John", "Grace", "Ray", "Lou", "Paul", "Jane",
+    "Mark", "Elle", "Jean", "Kai", "Beth", "Rey", "Rae", "Dean", "Jay", "May",
+    "Dale", "Nell", "Clara", "Jude", "Mae", "Noel", "Tate", "Eve", "Quinn", "Ruth",
+    "Lynn", "Beau", "Hope", "Gail", "Wade", "Blair", "Jace", "Skye", "Lane", "Drew",
+    "Reed", "Cade", "Rex", "Vance", "Saul", "Eli", "Asa", "Faye", "Zane", "Lux",
+    "Troy", "Shay", "Seth", "Hale", "Finn", "Joss", "Kirk", "Milo", "Owen", "Zeke",
+    "Tess", "Paige", "Dean", "Glenn", "Holly", "Jill", "Kaye", "Lee", "Lark", "Neal",
+    "Perry", "Rory", "Sage", "Tina", "Vera", "Wynn", "Zara", "Alex", "Blake", "Chase",
+    "Dane", "Ellis", "Frank", "Gale", "Haze", "Ira", "Jack", "Kane", "Lane", "Mace",
+    "Nate", "Olin", "Pax", "Rey", "Sean", "Tate", "Vail", "Wade", "Zion", "Abel",
+    "Blaine", "Casey", "Drew", "Evan", "Flynn", "Grant", "Hayes", "Ivy", "Jude", "Kirk",
+    "Luca", "Mila", "Noah", "Owen", "Paige", "Quinn", "Reese", "Shane", "Tara", "Vince",
+    "Wren", "Xane", "Yara", "Zane", "Amos", "Beck", "Cruz", "Dale", "Eli", "Finn",
+    "Gray", "Hale", "Ivan", "Joss", "Kade", "Lyle", "Mace", "Nico", "Omar", "Pax",
+    "Reed", "Seth", "Troy", "Vale", "Wynn", "Zeke", "Asa", "Beau", "Cal", "Dane",
+    "Ellis", "Gage", "Holt", "Jace", "Kane", "Leif", "Milo", "Nash", "Oren", "Pierce",
+    "Rex", "Saul", "Tate", "Vail", "West", "Zion", "Ari", "Bryn", "Cade", "Drew",
+    "Evan", "Fox", "Gray", "Hale", "Ira", "Jett", "Kirk", "Lane", "Milo", "Nash",
+    "Odin", "Pax", "Reed", "Seth", "Tate", "Vail", "Wynn", "Zane"
+]
+suffixes = [
+    "123", "x", "xx", "zzz", "guy", "gal", "pro", "player", "gamer", "hd", "jr", "sr",
+    "boss", "king", "queen", "god", "noob", "legend", "champ", "killer", "sniper", "shot",
+    "fire", "ice", "blade", "wolf", "hawk", "fox", "bear", "dragon", "shadow", "ghost",
+    "ninja", "samurai", "viper", "cobra", "wolfy", "beast", "killer", "sniper", "strike",
+    "rush", "shot", "dash", "speed", "flash", "boom", "blast", "storm", "stormy",
+    "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
+    "xoxo", "luv", "life", "fire", "ice", "light", "dark", "warrior", "fighter", "hunter",
+    "rocket", "rocketman", "rocketgirl", "smash", "crush", "bang", "buzz", "pop", "snap",
+    "zoom", "kingpin", "queenbee", "alpha", "omega", "max", "mini", "mega", "super", "ultra",
+    "mega", "baby", "cool", "rad", "lit", "dope", "fresh", "wild", "mad", "crazy",
+    "fast", "quick", "sharp", "slick", "smooth", "loud", "heavy", "bold", "brave", "keen",
+    "dark", "light", "red", "blue", "green", "black", "white", "gold", "silver", "bronze",
+    "steel", "iron", "chrome", "neon", "urban", "retro", "classic", "modern", "prime", "neo",
+    "meta", "cyber", "tech", "ghost", "shadow", "phantom", "mystic", "legend", "champ",
+    "ace", "rookie", "veteran", "master", "boss", "king", "queen", "duke", "baron", "sir",
+    "lady", "captain", "commander", "chief", "spark", "pulse", "beat", "flow", "wave",
+    "gear", "zone", "quest", "path", "trail", "step", "move", "spin", "roll", "crash",
+    "blast", "kick", "jump", "fly", "run", "climb", "slide", "burst", "flash", "Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Rodriguez", "Martinez",
+    "Hernandez", "Lopez", "Gonzalez", "Wilson", "Anderson", "Thomas", "Taylor", "Moore", "Jackson", "Martin",
+    "Lee", "Perez", "Thompson", "White", "Harris", "Sanchez", "Clark", "Ramirez", "Lewis", "Robinson",
+    "Walker", "Young", "Allen", "King", "Wright", "Scott", "Torres", "Nguyen", "Hill", "Flores",
+    "Green", "Adams", "Nelson", "Baker", "Hall", "Rivera", "Campbell", "Mitchell", "Carter", "Roberts",
+    "Gomez", "Phillips", "Evans", "Turner", "Diaz", "Parker", "Cruz", "Edwards", "Collins", "Reyes",
+    "Stewart", "Morris", "Morales", "Murphy", "Cook", "Rogers", "Gutierrez", "Ortiz", "Morgan", "Cooper",
+    "Peterson", "Bailey", "Reed", "Kelly", "Howard", "Ramos", "Kim", "Cox", "Ward", "Richardson",
+    "Watson", "Brooks", "Chavez", "Wood", "James", "Bennett", "Gray", "Mendoza", "Ruiz", "Hughes",
+    "Price", "Alvarez", "Castillo", "Sanders", "Patel", "Myers", "Long", "Ross", "Foster", "Jimenez",
+    "Powell", "Jenkins", "Perry", "Russell", "Sullivan", "Bell", "Coleman", "Butler", "Henderson", "Barnes",
+    "Gonzales", "Fisher", "Vasquez", "Simmons", "Romero", "Jordan", "Patterson", "Alexander", "Hamilton", "Graham",
+    "Reynolds", "Griffin", "Wallace", "Moreno", "West", "Cole", "Hayes", "Bryant", "Herrera", "Gibson",
+    "Ellis", "Tran", "Medina", "Aguilar", "Stevens", "Murray", "Ford", "Castro", "Marshall", "Owens",
+    "Harrison", "Fernandez", "Mcdonald", "Woods", "Washington", "Kennedy", "Wells", "Vargas", "Henry", "Chen",
+    "Freeman", "Webb", "Tucker", "Guzman", "Burns", "Crawford", "Olson", "Simpson", "Porter", "Hunter",
+    "Gordon", "Mendez", "Silva", "Shaw", "Snyder", "Mason", "Dixon", "Munoz", "Hunt", "Hicks",
+    "Holmes", "Palmer", "Wagner", "Black", "Robertson", "Boyd", "Rose", "Stone", "Salazar", "Fox",
+    "Warren", "Mills", "Meyer", "Rice", "Schmidt", "Garza", "Daniels", "Ferguson", "Nichols", "Stephens",
+    "Soto", "Weaver", "Ryan", "Gardner", "Payne", "Grant", "Dunn", "Kelley", "Spencer", "Hawkins"
+]
+
+# ========ITEMS=========
+swords = [
+    {'Name': 'Reinforced Bark Sword', 'ATK': 1.7, 'SP': 1.1, 'Crit': 1.0, 'MAX DUR': 70, 'DUR': 70, 'Class': 'Weapon', 'Cost': 12000},
+    {'Name': 'Rusty Iron Blade', 'ATK': 1.8, 'SP': 0.9, 'Crit': 1.1, 'MAX DUR': 80, 'DUR': 80, 'Class': 'Weapon', 'Cost': 13000},
+    {'Name': 'Worn Bronze Saber', 'ATK': 1.6, 'SP': 1.0, 'Crit': 1.0, 'MAX DUR': 75, 'DUR': 75, 'Class': 'Weapon', 'Cost': 11000},
+    {'Name': 'Steel Shortsword', 'ATK': 2.0, 'SP': 1.1, 'Crit': 1.2, 'MAX DUR': 120, 'DUR': 120, 'Class': 'Weapon', 'Cost': 15000},
+    {'Name': 'Leather Cutter', 'ATK': 1.4, 'SP': 1.2, 'Crit': 1.0, 'MAX DUR': 50, 'DUR': 50, 'Class': 'Weapon', 'Cost': 10000},
+    {'Name': 'Golden Dirk', 'ATK': 1.9, 'SP': 1.0, 'Crit': 1.3, 'MAX DUR': 110, 'DUR': 110, 'Class': 'Weapon', 'Cost': 14000},
+    {'Name': 'Bark Cleaver', 'ATK': 1.3, 'SP': 1.1, 'Crit': 0.9, 'MAX DUR': 60, 'DUR': 60, 'Class': 'Weapon', 'Cost': 9000},
+    {'Name': 'Iron Shortsword', 'ATK': 1.7, 'SP': 1.0, 'Crit': 1.0, 'MAX DUR': 85, 'DUR': 85, 'Class': 'Weapon', 'Cost': 12000},
+    {'Name': 'Bronze Falchion', 'ATK': 1.8, 'SP': 1.0, 'Crit': 1.1, 'MAX DUR': 90, 'DUR': 90, 'Class': 'Weapon', 'Cost': 13000},
+    {'Name': 'Steel Saber', 'ATK': 2.0, 'SP': 1.2, 'Crit': 1.3, 'MAX DUR': 130, 'DUR': 130, 'Class': 'Weapon', 'Cost': 15000},
+    {'Name': 'Leather Blade', 'ATK': 1.5, 'SP': 1.3, 'Crit': 1.0, 'MAX DUR': 55, 'DUR': 55, 'Class': 'Weapon', 'Cost': 11000},
+    {'Name': 'Golden Saber', 'ATK': 1.9, 'SP': 1.1, 'Crit': 1.4, 'MAX DUR': 125, 'DUR': 125, 'Class': 'Weapon', 'Cost': 14000},
+    {'Name': 'Bark Sword', 'ATK': 1.4, 'SP': 1.0, 'Crit': 0.9, 'MAX DUR': 50, 'DUR': 50, 'Class': 'Weapon', 'Cost': 9000},
+    {'Name': 'Iron Cutlass', 'ATK': 1.6, 'SP': 1.1, 'Crit': 1.0, 'MAX DUR': 80, 'DUR': 80, 'Class': 'Weapon', 'Cost': 12000},
+    {'Name': 'Bronze Scimitar', 'ATK': 1.7, 'SP': 1.0, 'Crit': 1.1, 'MAX DUR': 85, 'DUR': 85, 'Class': 'Weapon', 'Cost': 13000},
+    {'Name': 'Leather Sword', 'ATK': 1.3, 'SP': 1.1, 'Crit': 1.0, 'MAX DUR': 45, 'DUR': 45, 'Class': 'Weapon', 'Cost': 10000},
+    {'Name': 'Golden Cutlass', 'ATK': 1.8, 'SP': 1.0, 'Crit': 1.2, 'MAX DUR': 115, 'DUR': 115, 'Class': 'Weapon', 'Cost': 14000},
+    {'Name': 'Bark Dagger', 'ATK': 1.2, 'SP': 1.0, 'Crit': 0.8, 'MAX DUR': 40, 'DUR': 40, 'Class': 'Weapon', 'Cost': 9000},
+    {'Name': 'Iron Saber', 'ATK': 1.7, 'SP': 1.1, 'Crit': 1.0, 'MAX DUR': 90, 'DUR': 90, 'Class': 'Weapon', 'Cost': 13000},
+    {'Name': 'Bronze Cutter', 'ATK': 1.6, 'SP': 1.0, 'Crit': 1.0, 'MAX DUR': 70, 'DUR': 70, 'Class': 'Weapon', 'Cost': 10000},
+    {'Name': 'Steel Cutter', 'ATK': 1.9, 'SP': 1.1, 'Crit': 1.1, 'MAX DUR': 140, 'DUR': 140, 'Class': 'Weapon', 'Cost': 1500},
+    {'Name': 'Leather Falchion', 'ATK': 1.4, 'SP': 1.2, 'Crit': 1.0, 'MAX DUR': 50, 'DUR': 50, 'Class': 'Weapon', 'Cost': 10000},
+    {'Name': 'Golden Falchion', 'ATK': 1.9, 'SP': 1.0, 'Crit': 1.3, 'MAX DUR': 120, 'DUR': 120, 'Class': 'Weapon', 'Cost': 15000},
+    {'Name': 'Bark Shortsword', 'ATK': 1.3, 'SP': 1.0, 'Crit': 0.9, 'MAX DUR': 60, 'DUR': 60, 'Class': 'Weapon', 'Cost': 10000},
+    {'Name': 'Iron Rapier', 'ATK': 1.8, 'SP': 1.2, 'Crit': 1.1, 'MAX DUR': 95, 'DUR': 95, 'Class': 'Weapon', 'Cost': 13000},
+    {'Name': 'Bronze Rapier', 'ATK': 1.7, 'SP': 1.1, 'Crit': 1.0, 'MAX DUR': 85, 'DUR': 85, 'Class': 'Weapon', 'Cost': 12000},
+    {'Name': 'Steel Dagger', 'ATK': 1.9, 'SP': 1.0, 'Crit': 1.2, 'MAX DUR': 130, 'DUR': 130, 'Class': 'Weapon', 'Cost': 14000},
+    {'Name': 'Leather Rapier', 'ATK': 1.4, 'SP': 1.3, 'Crit': 1.0, 'MAX DUR': 55, 'DUR': 55, 'Class': 'Weapon', 'Cost': 11000},
+    {'Name': 'Golden Rapier', 'ATK': 1.8, 'SP': 1.1, 'Crit': 1.4, 'MAX DUR': 125, 'DUR': 125, 'Class': 'Weapon', 'Cost': 13500}
+] #average cost ~= 11000
+elite_swords = [
+    {'Name': 'Stormglass Longblade', 'ATK': 3.3, 'SP': 0.8, 'Crit': 2.4, 'MAX DUR': 210, 'DUR': 210, 'Class': 'Weapon', 'Cost': 20000},
+    {'Name': 'Sunblessed Broadsword', 'ATK': 4.8, 'SP': 0.9, 'Crit': 2.4, 'MAX DUR': 320, 'DUR': 320, 'Class': 'Weapon', 'Cost': 30000},
+    {'Name': 'Lunarfire Carver Longblade', 'ATK': 3.5, 'SP': 0.9, 'Crit': 2.5, 'MAX DUR': 230, 'DUR': 230, 'Class': 'Weapon', 'Cost': 23000},
+    {'Name': 'Moonstone Obsidian Blade', 'ATK': 4.0, 'SP': 1.4, 'Crit': 1.5, 'MAX DUR': 270, 'DUR': 270, 'Class': 'Weapon', 'Cost': 25500},
+    {'Name': 'Voidcrystal Sword', 'ATK': 3.4, 'SP': 1.9, 'Crit': 1.9, 'MAX DUR': 250, 'DUR': 250, 'Class': 'Weapon', 'Cost': 21000},
+    {'Name': 'Glintstone Broadsword', 'ATK': 4.4, 'SP': 1.4, 'Crit': 1.9, 'MAX DUR': 290, 'DUR': 290, 'Class': 'Weapon', 'Cost': 27000},
+    {'Name': 'Celestial Broadsword Phantom', 'ATK': 4.9, 'SP': 2.0, 'Crit': 2.5, 'MAX DUR': 340, 'DUR': 340, 'Class': 'Weapon', 'Cost': 34000},
+    {'Name': 'Crimson Saber Iron', 'ATK': 3.4, 'SP': 1.6, 'Crit': 1.5, 'MAX DUR': 240, 'DUR': 240, 'Class': 'Weapon', 'Cost': 20500},
+    {'Name': 'Shatterfang Damascus', 'ATK': 4.9, 'SP': 1.7, 'Crit': 2.3, 'MAX DUR': 320, 'DUR': 320, 'Class': 'Weapon', 'Cost': 33000},
+    {'Name': 'Runebound Cutlass', 'ATK': 3.8, 'SP': 0.9, 'Crit': 2.3, 'MAX DUR': 260, 'DUR': 260, 'Class': 'Weapon', 'Cost': 23000},
+    {'Name': 'Lunarfire Etherium Phantom', 'ATK': 4.8, 'SP': 1.7, 'Crit': 2.1, 'MAX DUR': 310, 'DUR': 310, 'Class': 'Weapon', 'Cost': 31000},
+    {'Name': 'Ghoststeel Damascus', 'ATK': 4.1, 'SP': 1.0, 'Crit': 2.4, 'MAX DUR': 300, 'DUR': 300, 'Class': 'Weapon', 'Cost': 30000},
+    {'Name': 'Blackglass Blade', 'ATK': 4.8, 'SP': 1.9, 'Crit': 2.3, 'MAX DUR': 335, 'DUR': 335, 'Class': 'Weapon', 'Cost': 33500},
+    {'Name': 'Celestial Cutlass', 'ATK': 4.0, 'SP': 1.4, 'Crit': 2.3, 'MAX DUR': 300, 'DUR': 300, 'Class': 'Weapon', 'Cost': 30000},
+    {'Name': 'Blackglass Saber', 'ATK': 4.8, 'SP': 0.8, 'Crit': 1.7, 'MAX DUR': 320, 'DUR': 320, 'Class': 'Weapon', 'Cost': 33000},
+    {'Name': 'Crimson Iron', 'ATK': 4.1, 'SP': 0.9, 'Crit': 1.7, 'MAX DUR': 280, 'DUR': 280, 'Class': 'Weapon', 'Cost': 28000},
+    {'Name': 'Glintstone Steel', 'ATK': 4.9, 'SP': 1.7, 'Crit': 1.7, 'MAX DUR': 360, 'DUR': 360, 'Class': 'Weapon', 'Cost': 36000},
+    {'Name': 'Celestial Iron', 'ATK': 3.1, 'SP': 1.3, 'Crit': 2.3, 'MAX DUR': 210, 'DUR': 210, 'Class': 'Weapon', 'Cost': 20000},
+    {'Name': 'Bloodiron Saber', 'ATK': 4.2, 'SP': 0.8, 'Crit': 1.8, 'MAX DUR': 320, 'DUR': 320, 'Class': 'Weapon', 'Cost': 32000},
+    {'Name': 'Shatterfang Damascus', 'ATK': 4.0, 'SP': 0.9, 'Crit': 1.5, 'MAX DUR': 270, 'DUR': 270, 'Class': 'Weapon', 'Cost': 27000},
+    {'Name': 'Blackglass Sharpsword', 'ATK': 3.1, 'SP': 1.4, 'Crit': 1.8, 'MAX DUR': 210, 'DUR': 210, 'Class': 'Weapon', 'Cost': 20000},
+    {'Name': 'Ashenroot Broadsword', 'ATK': 4.4, 'SP': 1.4, 'Crit': 2.1, 'MAX DUR': 320, 'DUR': 320, 'Class': 'Weapon', 'Cost': 32000},
+    {'Name': 'Skyshard Iron Sword', 'ATK': 3.9, 'SP': 2.0, 'Crit': 1.8, 'MAX DUR': 300, 'DUR': 300, 'Class': 'Weapon', 'Cost': 30000},
+    {'Name': 'Shatterfang Phantom Steel', 'ATK': 3.4, 'SP': 1.3, 'Crit': 1.8, 'MAX DUR': 270, 'DUR': 270, 'Class': 'Weapon', 'Cost': 27000},
+    {'Name': 'Silveredge Phantom', 'ATK': 4.7, 'SP': 1.6, 'Crit': 1.8, 'MAX DUR': 350, 'DUR': 350, 'Class': 'Weapon', 'Cost': 35000},
+    {'Name': 'Dragonbone Saber', 'ATK': 4.4, 'SP': 1.1, 'Crit': 2.3, 'MAX DUR': 325, 'DUR': 325, 'Class': 'Weapon', 'Cost': 32500},
+    {'Name': 'Sunblessed Obsidian Sharpsword', 'ATK': 4.8, 'SP': 1.8, 'Crit': 2.3, 'MAX DUR': 360, 'DUR': 360, 'Class': 'Weapon', 'Cost': 36000},
+    {'Name': 'Blackglass Sharpsword', 'ATK': 5.0, 'SP': 1.7, 'Crit': 2.1, 'MAX DUR': 420, 'DUR': 420, 'Class': 'Weapon', 'Cost': 42000},
+    {'Name': 'Sunblessed Etherium Broadsword', 'ATK': 3.7, 'SP': 1.5, 'Crit': 2.0, 'MAX DUR': 290, 'DUR': 290, 'Class': 'Weapon', 'Cost': 29000},
+    {'Name': 'Starforged Obsidian Carver', 'ATK': 3.3, 'SP': 1.5, 'Crit': 1.7, 'MAX DUR': 240, 'DUR': 240, 'Class': 'Weapon', 'Cost': 24000},
+    {'Name': 'Whirlwind Saber', 'ATK': 4.2, 'SP': 1.4, 'Crit': 2.2, 'MAX DUR': 320, 'DUR': 320, 'Class': 'Weapon', 'Cost': 32000},
+    {'Name': 'Dragonbone Steel Etherium', 'ATK': 4.8, 'SP': 1.2, 'Crit': 2.5, 'MAX DUR': 365, 'DUR': 365, 'Class': 'Weapon', 'Cost': 36500},
+    {'Name': 'Frostshard Phantom', 'ATK': 4.8, 'SP': 1.6, 'Crit': 2.0, 'MAX DUR': 355, 'DUR': 355, 'Class': 'Weapon', 'Cost': 35500},
+    {'Name': 'Emberglow Damascus Phantom', 'ATK': 3.8, 'SP': 1.0, 'Crit': 2.1, 'MAX DUR': 280, 'DUR': 280, 'Class': 'Weapon', 'Cost': 28000},
+    {'Name': 'Emberglow Broadsword', 'ATK': 4.8, 'SP': 1.2, 'Crit': 2.2, 'MAX DUR': 360, 'DUR': 360, 'Class': 'Weapon', 'Cost': 36000},
+    {'Name': 'Dragonbone Sword', 'ATK': 3.7, 'SP': 0.9, 'Crit': 2.0, 'MAX DUR': 265, 'DUR': 265, 'Class': 'Weapon', 'Cost': 26500},
+    {'Name': 'Sunblessed Steel Saber', 'ATK': 3.0, 'SP': 1.7, 'Crit': 1.7, 'MAX DUR': 220, 'DUR': 220, 'Class': 'Weapon', 'Cost': 22000},
+    {'Name': 'Crimson Blade Obsidian', 'ATK': 3.1, 'SP': 1.9, 'Crit': 1.7, 'MAX DUR': 230, 'DUR': 230, 'Class': 'Weapon', 'Cost': 23000},
+    {'Name': 'Sunblessed Sharpsword', 'ATK': 3.4, 'SP': 1.8, 'Crit': 1.8, 'MAX DUR': 250, 'DUR': 250, 'Class': 'Weapon', 'Cost': 25000},
+    {'Name': 'Sunblessed Damascus', 'ATK': 3.8, 'SP': 1.0, 'Crit': 1.9, 'MAX DUR': 290, 'DUR': 290, 'Class': 'Weapon', 'Cost': 29000},
+    {'Name': 'Starforged Damascus', 'ATK': 4.8, 'SP': 1.7, 'Crit': 1.7, 'MAX DUR': 360, 'DUR': 360, 'Class': 'Weapon', 'Cost': 36000},
+    {'Name': 'Glintstone Broadsword Damascus', 'ATK': 3.1, 'SP': 1.2, 'Crit': 2.3, 'MAX DUR': 235, 'DUR': 235, 'Class': 'Weapon', 'Cost': 23500},
+    {'Name': 'Celestial Broadsword Damascus', 'ATK': 3.8, 'SP': 1.8, 'Crit': 2.2, 'MAX DUR': 300, 'DUR': 300, 'Class': 'Weapon', 'Cost': 30000},
+    {'Name': 'Glintstone Saber Cutlass', 'ATK': 3.4, 'SP': 1.2, 'Crit': 2.0, 'MAX DUR': 260, 'DUR': 260, 'Class': 'Weapon', 'Cost': 26000},
+    {'Name': 'Dragonbone Obsidian', 'ATK': 4.8, 'SP': 1.4, 'Crit': 1.5, 'MAX DUR': 370, 'DUR': 370, 'Class': 'Weapon', 'Cost': 37000},
+    {'Name': 'Netherite Damascus', 'ATK': 4.7, 'SP': 0.9, 'Crit': 2.4, 'MAX DUR': 355, 'DUR': 355, 'Class': 'Weapon', 'Cost': 35500},
+    {'Name': 'Crimson Cutlass Phantom', 'ATK': 4.3, 'SP': 1.1, 'Crit': 2.1, 'MAX DUR': 220, 'DUR': 220, 'Class': 'Weapon', 'Cost': 3200},
+    {'Name': 'Ghoststeel Broadsword Cleaver', 'ATK': 4.7, 'SP': 1.5, 'Crit': 1.9, 'MAX DUR': 360, 'DUR': 360, 'Class': 'Weapon', 'Cost': 36000},
+    {'Name': 'Shatterfang Iron', 'ATK': 4.5, 'SP': 1.5, 'Crit': 2.2, 'MAX DUR': 330, 'DUR': 330, 'Class': 'Weapon', 'Cost': 33000},
+    {'Name': 'Mythsteel Carver', 'ATK': 4.2, 'SP': 2.0, 'Crit': 2.3, 'MAX DUR': 315, 'DUR': 315, 'Class': 'Weapon', 'Cost': 31500}
+] #average cost ~= 30000
+helmets = [
+    {'Name': 'Ironhelm', 'DEF': 2.9, 'SP': 1.0, 'MAX DUR': 590, 'DUR': 590, 'Class': 'Helmet', 'Cost': 63000},
+    {'Name': 'Steelguard Soulveil', 'DEF': 3.0, 'SP': 0.9, 'MAX DUR': 620, 'DUR': 620, 'Class': 'Helmet', 'Cost': 63000},
+    {'Name': 'Dragoncrest Helm', 'DEF': 2.8, 'SP': 1.0, 'MAX DUR': 580, 'DUR': 580, 'Class': 'Helmet', 'Cost': 62000},
+    {'Name': 'Stormhelm Soulveil', 'DEF': 2.7, 'SP': 1.0, 'MAX DUR': 550, 'DUR': 550, 'Class': 'Helmet', 'Cost': 61000},
+    {'Name': 'Bloodguard Helm', 'DEF': 2.5, 'SP': 1.0, 'MAX DUR': 520, 'DUR': 520, 'Class': 'Helmet', 'Cost': 59000},
+    {'Name': 'Skullforge Soulveil', 'DEF': 3.0, 'SP': 0.8, 'MAX DUR': 610, 'DUR': 610, 'Class': 'Helmet', 'Cost': 62000},
+    {'Name': 'Nighthelm', 'DEF': 2.6, 'SP': 1.0, 'MAX DUR': 540, 'DUR': 540, 'Class': 'Helmet', 'Cost': 60000},
+    {'Name': 'Frostguard Soulveil', 'DEF': 2.9, 'SP': 0.9, 'MAX DUR': 590, 'DUR': 590, 'Class': 'Helmet', 'Cost': 62000},
+    {'Name': 'Thunderhelm', 'DEF': 3.0, 'SP': 1.0, 'MAX DUR': 630, 'DUR': 630, 'Class': 'Helmet', 'Cost': 64000},
+    {'Name': 'Shadowguard Soulveil', 'DEF': 2.4, 'SP': 1.0, 'MAX DUR': 490, 'DUR': 490, 'Class': 'Helmet', 'Cost': 58000},
+    {'Name': 'Firecrest Helm', 'DEF': 2.7, 'SP': 1.0, 'MAX DUR': 560, 'DUR': 560, 'Class': 'Helmet', 'Cost': 61000},
+    {'Name': 'Crystalhelm Soulveil', 'DEF': 2.9, 'SP': 1.0, 'MAX DUR': 600, 'DUR': 600, 'Class': 'Helmet', 'Cost': 63000},
+    {'Name': 'Boneguard Helm', 'DEF': 2.8, 'SP': 1.0, 'MAX DUR': 580, 'DUR': 580, 'Class': 'Helmet', 'Cost': 62000},
+    {'Name': 'Darkhelm Soulveil', 'DEF': 2.3, 'SP': 1.0, 'MAX DUR': 470, 'DUR': 470, 'Class': 'Helmet', 'Cost': 57000},
+    {'Name': 'Voidguard Helm', 'DEF': 2.5, 'SP': 0.7, 'MAX DUR': 450, 'DUR': 450, 'Class': 'Helmet', 'Cost': 56000},
+    {'Name': 'Stonecrest Soulveil', 'DEF': 3.0, 'SP': 0.6, 'MAX DUR': 580, 'DUR': 580, 'Class': 'Helmet', 'Cost': 60000},
+    {'Name': 'Flamehelm', 'DEF': 2.8, 'SP': 1.0, 'MAX DUR': 580, 'DUR': 580, 'Class': 'Helmet', 'Cost': 62000},
+    {'Name': 'Ghostguard Soulveil', 'DEF': 2.9, 'SP': 0.9, 'MAX DUR': 590, 'DUR': 590, 'Class': 'Helmet', 'Cost': 62000},
+    {'Name': 'Stormguard Helm', 'DEF': 2.7, 'SP': 1.0, 'MAX DUR': 560, 'DUR': 560, 'Class': 'Helmet', 'Cost': 61000},
+    {'Name': 'Embercrest Soulveil', 'DEF': 2.6, 'SP': 1.0, 'MAX DUR': 540, 'DUR': 540, 'Class': 'Helmet', 'Cost': 60000},
+    {'Name': 'Ironveil Helm', 'DEF': 3.0, 'SP': 1.0, 'MAX DUR': 640, 'DUR': 640, 'Class': 'Helmet', 'Cost': 64000},
+    {'Name': 'Frosthelm Soulveil', 'DEF': 2.4, 'SP': 0.8, 'MAX DUR': 480, 'DUR': 480, 'Class': 'Helmet', 'Cost': 56000},
+    {'Name': 'Dreadguard Helm', 'DEF': 2.5, 'SP': 1.0, 'MAX DUR': 520, 'DUR': 520, 'Class': 'Helmet', 'Cost': 59000},
+    {'Name': 'Phantomhelm Soulveil', 'DEF': 2.3, 'SP': 0.9, 'MAX DUR': 470, 'DUR': 470, 'Class': 'Helmet', 'Cost': 56000},
+    {'Name': 'Runecrest Helm', 'DEF': 2.7, 'SP': 1.0, 'MAX DUR': 550, 'DUR': 550, 'Class': 'Helmet', 'Cost': 61000},
+    {'Name': 'Steelveil Soulveil', 'DEF': 2.8, 'SP': 0.7, 'MAX DUR': 530, 'DUR': 530, 'Class': 'Helmet', 'Cost': 59000},
+    {'Name': 'Ashenhelm', 'DEF': 2.6, 'SP': 1.0, 'MAX DUR': 540, 'DUR': 540, 'Class': 'Helmet', 'Cost': 60000},
+    {'Name': 'Spiritguard Soulveil', 'DEF': 2.9, 'SP': 0.9, 'MAX DUR': 590, 'DUR': 590, 'Class': 'Helmet', 'Cost': 62000},
+    {'Name': 'Grimcrest Helm', 'DEF': 2.7, 'SP': 1.0, 'MAX DUR': 560, 'DUR': 560, 'Class': 'Helmet', 'Cost': 61000},
+    {'Name': 'Shadowhelm Soulveil', 'DEF': 2.8, 'SP': 0.8, 'MAX DUR': 580, 'DUR': 580, 'Class': 'Helmet', 'Cost': 60000}
+] #average cost ~= 60000 
+chestplates = [
+    {'Name': 'Voidcrystal Chestplate', 'DEF': 4.1, 'SP': 1.1, 'MAX DUR': 950, 'DUR': 950, 'Class': 'Chestplate', 'Cost': 60000},
+    {'Name': 'Mythristeel Harness', 'DEF': 4.5, 'SP': 1.2, 'MAX DUR': 1020, 'DUR': 1020, 'Class': 'Chestplate', 'Cost': 66000},
+    {'Name': 'Phantom Vest', 'DEF': 4.7, 'SP': 1.3, 'MAX DUR': 1080, 'DUR': 1080, 'Class': 'Chestplate', 'Cost': 68000},
+    {'Name': 'Gilded Dragonplate', 'DEF': 5.2, 'SP': 1.4, 'MAX DUR': 1180, 'DUR': 1180, 'Class': 'Chestplate', 'Cost': 74000},
+    {'Name': 'Nebulaweave Carapace', 'DEF': 4.9, 'SP': 1.5, 'MAX DUR': 1110, 'DUR': 1110, 'Class': 'Chestplate', 'Cost': 72000},
+    {'Name': 'Reinforced Barkmail', 'DEF': 5.1, 'SP': 1.6, 'MAX DUR': 1150, 'DUR': 1150, 'Class': 'Chestplate', 'Cost': 75000},
+    {'Name': 'Obsidian Coreplate', 'DEF': 5.5, 'SP': 1.7, 'MAX DUR': 1200, 'DUR': 1200, 'Class': 'Chestplate', 'Cost': 80000},
+    {'Name': 'Celestial Mantle', 'DEF': 4.3, 'SP': 1.8, 'MAX DUR': 980, 'DUR': 980, 'Class': 'Chestplate', 'Cost': 69000},
+    {'Name': 'Boneglass Vestment', 'DEF': 4.6, 'SP': 1.9, 'MAX DUR': 1050, 'DUR': 1050, 'Class': 'Chestplate', 'Cost': 73000},
+    {'Name': 'Starlight Laminar', 'DEF': 5.3, 'SP': 1.4, 'MAX DUR': 1170, 'DUR': 1170, 'Class': 'Chestplate', 'Cost': 75000},
+    {'Name': 'Ashen Emberplate', 'DEF': 5.0, 'SP': 1.1, 'MAX DUR': 1120, 'DUR': 1120, 'Class': 'Chestplate', 'Cost': 69000},
+    {'Name': 'Runeforged Shell', 'DEF': 4.8, 'SP': 1.2, 'MAX DUR': 1080, 'DUR': 1080, 'Class': 'Chestplate', 'Cost': 68000},
+    {'Name': 'Frosthide Chestwrap', 'DEF': 5.4, 'SP': 1.3, 'MAX DUR': 1190, 'DUR': 1190, 'Class': 'Chestplate', 'Cost': 75000},
+    {'Name': 'Nightmare Husk', 'DEF': 4.4, 'SP': 1.5, 'MAX DUR': 990, 'DUR': 990, 'Class': 'Chestplate', 'Cost': 67000},
+    {'Name': 'Thunderbound Vest', 'DEF': 5.7, 'SP': 1.6, 'MAX DUR': 1200, 'DUR': 1200, 'Class': 'Chestplate', 'Cost': 81000},
+    {'Name': 'Ebonstone Plate', 'DEF': 4.2, 'SP': 1.7, 'MAX DUR': 970, 'DUR': 970, 'Class': 'Chestplate', 'Cost': 67000},
+    {'Name': 'Scorchscale Mail', 'DEF': 5.6, 'SP': 1.8, 'MAX DUR': 1190, 'DUR': 1190, 'Class': 'Chestplate', 'Cost': 82000},
+    {'Name': 'Ironbark Breastguard', 'DEF': 4.9, 'SP': 1.9, 'MAX DUR': 1130, 'DUR': 1130, 'Class': 'Chestplate', 'Cost': 76000},
+    {'Name': 'Moonshroud Corslet', 'DEF': 5.8, 'SP': 1.3, 'MAX DUR': 1200, 'DUR': 1200, 'Class': 'Chestplate', 'Cost': 81000},
+    {'Name': 'Starforged Plating', 'DEF': 4.7, 'SP': 1.4, 'MAX DUR': 1070, 'DUR': 1070, 'Class': 'Chestplate', 'Cost': 71000}
+] #average cost ~= 72000
+leggings = [
+    {"Name": "Shadowfiber Leggings", "DEF": 3.2, "SP": 1.5, "MAX DUR": 900, "DUR": 900, "Class": "Leggings", "Cost": 63000},
+    {"Name": "Ironbark Greaves", "DEF": 3.4, "SP": 1.0, "MAX DUR": 920, "DUR": 920, "Class": "Leggings", "Cost": 60000},
+    {"Name": "Silkweave Leggings", "DEF": 2.9, "SP": 1.4, "MAX DUR": 750, "DUR": 750, "Class": "Leggings", "Cost": 59000},
+    {"Name": "Glacialweave Greaves", "DEF": 2.8, "SP": 1.6, "MAX DUR": 740, "DUR": 740, "Class": "Leggings", "Cost": 60000},
+    {"Name": "Moonshadow Leggings", "DEF": 3.0, "SP": 1.3, "MAX DUR": 780, "DUR": 780, "Class": "Leggings", "Cost": 59000},
+    {"Name": "Stormsteel Greaves", "DEF": 3.5, "SP": 1.3, "MAX DUR": 930, "DUR": 930, "Class": "Leggings", "Cost": 64000},
+    {"Name": "Starwoven Leggings", "DEF": 3.5, "SP": 1.6, "MAX DUR": 950, "DUR": 950, "Class": "Leggings", "Cost": 67000},
+    {"Name": "Duskveil Greaves", "DEF": 2.9, "SP": 1.1, "MAX DUR": 730, "DUR": 730, "Class": "Leggings", "Cost": 56000},
+    {"Name": "Duskmire Leggings", "DEF": 3.1, "SP": 1.2, "MAX DUR": 800, "DUR": 800, "Class": "Leggings", "Cost": 59000},
+    {"Name": "Emberleaf Greaves", "DEF": 3.0, "SP": 1.0, "MAX DUR": 780, "DUR": 780, "Class": "Leggings", "Cost": 56000},
+    {"Name": "Frostglow Leggings", "DEF": 2.8, "SP": 1.1, "MAX DUR": 720, "DUR": 720, "Class": "Leggings", "Cost": 55000},
+    {"Name": "Crystalmesh Greaves", "DEF": 3.1, "SP": 1.4, "MAX DUR": 810, "DUR": 810, "Class": "Leggings", "Cost": 61000},
+    {"Name": "Emberthread Leggings", "DEF": 3.3, "SP": 1.0, "MAX DUR": 870, "DUR": 870, "Class": "Leggings", "Cost": 59000},
+    {"Name": "Shadowsteel Greaves", "DEF": 3.5, "SP": 1.2, "MAX DUR": 920, "DUR": 920, "Class": "Leggings", "Cost": 63000},
+    {"Name": "Veilshadow Leggings", "DEF": 3.4, "SP": 1.6, "MAX DUR": 940, "DUR": 940, "Class": "Leggings", "Cost": 66000},
+    {"Name": "Stormshard Greaves", "DEF": 3.2, "SP": 1.3, "MAX DUR": 880, "DUR": 880, "Class": "Leggings", "Cost": 61000},
+    {"Name": "Nightbloom Leggings", "DEF": 2.7, "SP": 1.3, "MAX DUR": 700, "DUR": 700, "Class": "Leggings", "Cost": 56000},
+    {"Name": "Soulplate Greaves", "DEF": 3.3, "SP": 1.5, "MAX DUR": 910, "DUR": 910, "Class": "Leggings", "Cost": 64000},
+    {"Name": "Stormveil Leggings", "DEF": 3.0, "SP": 1.5, "MAX DUR": 820, "DUR": 820, "Class": "Leggings", "Cost": 61000},
+    {"Name": "Frostbane Greaves", "DEF": 3.4, "SP": 1.1, "MAX DUR": 900, "DUR": 900, "Class": "Leggings", "Cost": 61000}
+] #average cost ~= 60000 
+boots = [ 
+    {"Name": "Ashleather Boots", "DEF": 1.8, "SP": 1.7, "MAX DUR": 750, "DUR": 750, "Class": "Boots", "Cost": 51000},
+    {"Name": "Moltenhide Sabatons", "DEF": 2.0, "SP": 1.3, "MAX DUR": 780, "DUR": 780, "Class": "Boots", "Cost": 49000},
+    {"Name": "Starstitch Treads", "DEF": 1.5, "SP": 2.0, "MAX DUR": 600, "DUR": 600, "Class": "Boots", "Cost": 51000},
+    {"Name": "Voidflame Striders", "DEF": 1.9, "SP": 1.4, "MAX DUR": 740, "DUR": 740, "Class": "Boots", "Cost": 49000},
+    {"Name": "Dusksilk Walkers", "DEF": 1.6, "SP": 1.9, "MAX DUR": 650, "DUR": 650, "Class": "Boots", "Cost": 51000},
+    {"Name": "Thundersoul Stormsteps", "DEF": 2.0, "SP": 1.1, "MAX DUR": 780, "DUR": 780, "Class": "Boots", "Cost": 47000},
+    {"Name": "Echowind Voidboots", "DEF": 1.7, "SP": 1.6, "MAX DUR": 700, "DUR": 700, "Class": "Boots", "Cost": 49000},
+    {"Name": "Glimmerscale Ashwalkers", "DEF": 1.5, "SP": 1.8, "MAX DUR": 620, "DUR": 620, "Class": "Boots", "Cost": 49000},
+    {"Name": "Twilighthide Frostbound", "DEF": 2.0, "SP": 1.2, "MAX DUR": 780, "DUR": 780, "Class": "Boots", "Cost": 49000},
+    {"Name": "Frostlace Soulstriders", "DEF": 1.9, "SP": 1.5, "MAX DUR": 750, "DUR": 750, "Class": "Boots", "Cost": 51000},
+    {"Name": "Blightiron Boots", "DEF": 1.6, "SP": 1.7, "MAX DUR": 670, "DUR": 670, "Class": "Boots", "Cost": 50000},
+    {"Name": "Runetwine Runebinders", "DEF": 2.0, "SP": 1.0, "MAX DUR": 780, "DUR": 780, "Class": "Boots", "Cost": 47000},
+    {"Name": "Brightmist Starboots", "DEF": 1.8, "SP": 1.9, "MAX DUR": 740, "DUR": 740, "Class": "Boots", "Cost": 55000},
+    {"Name": "Shadowfiber Walkers", "DEF": 1.4, "SP": 2.0, "MAX DUR": 600, "DUR": 600, "Class": "Boots", "Cost": 52000},
+    {"Name": "Nightcore Sabatons", "DEF": 1.7, "SP": 1.6, "MAX DUR": 700, "DUR": 700, "Class": "Boots", "Cost": 51000},
+    {"Name": "Emberlace Skywalkers", "DEF": 2.0, "SP": 1.3, "MAX DUR": 780, "DUR": 780, "Class": "Boots", "Cost": 51000},
+    {"Name": "Netherstep Boots", "DEF": 1.6, "SP": 1.8, "MAX DUR": 680, "DUR": 680, "Class": "Boots", "Cost": 52000},
+    {"Name": "Ironshade Warpboots", "DEF": 1.9, "SP": 1.2, "MAX DUR": 750, "DUR": 750, "Class": "Boots", "Cost": 49000},
+    {"Name": "Crystalhide Striders", "DEF": 2.0, "SP": 1.1, "MAX DUR": 780, "DUR": 780, "Class": "Boots", "Cost": 49000},
+    {"Name": "Duskrune Voidboots", "DEF": 1.5, "SP": 2.0, "MAX DUR": 620, "DUR": 620, "Class": "Boots", "Cost": 53000},
+    {"Name": "Thornwoven Treads", "DEF": 1.8, "SP": 1.6, "MAX DUR": 720, "DUR": 720, "Class": "Boots", "Cost": 52000}
+] #average cost ~= 50000 
+potions = [
+    {"Name": "Potion of Healing", "Tier": 1, "Effect": 500, "Cost": 250, "Class": "Potion of Healing"},
+    {"Name": "Potion of Strength", "Tier": 1, "Effect": 2, "Cost": 500, "Class": "Potion of Strength"},
+    {"Name": "Potion of Defense", "Tier": 1, "Effect": 2, "Cost": 500, "Class": "Potion of Defense"},
+]
+
+#========MONSTERS=========
+soldiers = {
+    "Goblin Recruit": {
+        "HP": 2000, 
+        "ATK": 200, 
+        "DEF": 150, 
+        "Crit": 10,
+        "SP": 20,
+        "EXP": 20, 
+        "Weapon": {"Name": "Spiked Club", "ATK": 2, "SP": 1.4, "Crit": 1.5, "MAX DUR": 850, "DUR": 850, "Class": "Weapon"},
+        "Left Hand": {"Name": "Reinforced Bark Shield", "DEF": 1.5, "SP": 0.8, "MAX DUR": 900, "DUR": 900, "Class": "Shield"},
+        "Helmet": {},
+        "Chestplate": {"Name": "Bark Chestplate", "DEF": 1.8, "SP": 1, "MAX DUR": 950, "DUR": 950, "Class": "Chestplate"},
+        "Leggings": {},
+        "Boots": {"Name": "Bark Boots", "DEF": 1.2, "SP": 1.1, "MAX DUR": 750, "DUR": 750, "Class": "Boots"}
+    },
+    "Goblin Lieutenant": {
+        "HP": 2600, 
+        "ATK": 300, 
+        "DEF": 150,
+        "Crit": 15,
+        "SP": 20,
+        "EXP": 30,
+        "Weapon": {"Name": "Jagged Iron Sword", "ATK": 2.4, "SP": 1, "Crit": 1.7, "MAX DUR": 1200, "DUR": 1200, "Class": "Weapon"},
+        "Left Hand": {"Name": "Rusty Steel Shield", "DEF": 1.3, "SP": 0.8, "MAX DUR": 1000, "DUR": 1000, "Class": "Shield"},
+        "Helmet": {"Name": "Mythril Helmet", "DEF": 1.5, "SP": 1, "MAX DUR": 1100, "DUR": 1100, "Class": "Helmet"},
+        "Chestplate": {"Name": "Scrapmail Vest", "DEF": 2.2, "SP": 0.9, "MAX DUR": 1250, "DUR": 1250, "Class": "Chestplate"},
+        "Leggings": {"Name": "Reinforced Leather Greaves", "DEF": 1.5, "SP": 1.4, "MAX DUR": 950, "DUR": 950, "Class": "Boots"},
+        "Boots": {}
+    },
+    "Goblin Archer": {
+        "HP": 1900, 
+        "ATK": 400, 
+        "DEF": 100, 
+        "Crit": 10,
+        "SP": 50,
+        "EXP": 20,
+        "Weapon": {"Name": "Short Bow", "ATK": 2, "SP": 2, "Crit": 1.5, "MAX DUR": 700, "DUR": 700, "Class": "Weapon"},
+        "Left Hand": {"Name": "Chainmail Shield", "DEF": 1.2, "SP": 0.9, "MAX DUR": 850, "DUR": 850, "Class": "Shield"},
+        "Helmet": {"Name": "Leather Helmet", "DEF": 1.3, "SP": 1, "MAX DUR": 800, "DUR": 800, "Class": "Helmet"},
+        "Chestplate": {"Name": "Leather Chestplate", "DEF": 1.5, "SP": 0.9, "MAX DUR": 900, "DUR": 900, "Class": "Chestplate"},
+        "Leggings": {},
+        "Boots": {"Name": "Leather Boots", "DEF": 1.2, "SP": 1.2, "MAX DUR": 700, "DUR": 700, "Class": "Boots"}
+    },
+    "Troll Grunt": {
+        "HP": 2100,
+        "ATK": 300,
+        "DEF": 200,
+        "Crit": 20,
+        "SP": 30,
+        "EXP": 20,
+        "Weapon": {"Name": "Hardened Oak Club", "ATK": 1.5, "SP": 1, "Crit": 1.2, "MAX DUR": 1300, "DUR": 1300, "Class": "Weapon"},
+        "Left Hand": {"Name": "Reinforced Leather Shield", "DEF": 1.5, "SP": 1, "MAX DUR": 1150, "DUR": 1150, "Class": "Shield"},
+        "Helmet": {},
+        "Chestplate": {},
+        "Leggings": {},
+        "Boots": {}
+    }
+}
+monsters = {    
+    "Snow Shaman": {
+        "HP": 2600,
+        "ATK": 300,
+        "DEF": 200,
+        "Crit": 20,
+        "SP": 25,
+        "EXP": 40,
+        "Weapon": {"Name": "Permafrost Icereed Staff", "ATK": 2, "SP": 1, "Crit": 2, "Effect": "Freeze", "Chance": 10},
+        "Left Hand": {"Name": "Frostbound Talisman", "Effect": "Dodge", "Chance": 30, "Class": "Rune"},
+        "Drops": [
+            {"Name": "Frostbound Talisman", "Effect": "Dodge", "Chance": 30, "Class": "Rune"},
+            {"Name": "Scroll of Endless Winter", "Class": "Scroll"},
+        ]
+    },
+    "Flame Shaman": {
+        "HP": 2600,
+        "ATK": 300,
+        "DEF": 200,
+        "Crit": 20,
+        "SP": 25,
+        "EXP": 40,
+        "Weapon": {"Name": "Hellfire Blazebark Staff", "ATK": 3, "SP": 1.5, "Crit": 0.5, "Effect": "Fire", "Chance": 10},
+        "Left Hand": {"Name": "Ashenroot Talisman", "Effect": "Dodge", "Chance": 30, "Class": "Rune"},
+        "Drops": [
+            {"Name": "Ashenroot Talisman", "Effect": "Dodge", "Chance": 30, "Class": "Rune"},
+            {"Name": "Scroll of Infernal Blaze", "Class": "Scroll"}
+        ]
+    }
+}
+boss = {
+    "Troll Elite Commander": {
+        "HP": 20000,
+        "ATK": 1500,
+        "DEF": 1000,
+        "Crit": 50,
+        "SP": 50,
+        "EXP": 5000,
+        "Weapon": {"Name": "Starforged Etherium Double-Edged Sharpsword", "ATK": 10, "SP": 2, "Crit": 3, "MAX DUR": 5000, "DUR": 5000, "Class": "Weapon"},
+        "Left Hand": {"Name": "Nethersteel Jagged Shield", "DEF": 5, "SP": 3, "MAX DUR": 5500, "DUR": 5500, "Class": "Shield"},
+        "Helmet": {"Name": "Stormforged Phantom Iron Helmet", "DEF": 7, "SP": 1, "MAX DUR": 4800, "DUR": 4800, "Class": "Helmet"},
+        "Chestplate": {"Name": "Voidcrystal Chestplate", "DEF": 10, "SP": 1, "MAX DUR": 6000, "DUR": 6000, "Class": "Chestplate"},
+        "Leggings": {"Name": "Bloodiron Leggings", "DEF": 7, "SP": 2, "MAX DUR": 5200, "DUR": 5200, "Class": "Boots"},
+        "Boots": {"Name": "Abyssal Gold Boots", "DEF": 5, "SP": 3, "MAX DUR": 5100, "DUR": 5100, "Class": "Boots"}
+    },
+    "Goblin Sergeant": {
+        "HP": 20000, 
+        "ATK": 5000, 
+        "DEF": 3000, 
+        "Crit": 100,
+        "SP": 0,
+        "EXP": 5000,
+        "Weapon": {"Name": "Great Damascus Sword", "ATK": 6, "SP": 1, "Crit": 3, "MAX DUR": 4600, "DUR": 4600, "Class": "Weapon"},
+        "Left Hand": {"Name": "Crusader Round Shield", "DEF": 2, "SP": 1.25, "MAX DUR": 4300, "DUR": 4300, "Class": "Shield"},
+        "Helmet": {"Name": "Celestial Bronze Helmet", "DEF": 7, "SP": 1, "MAX DUR": 4900, "DUR": 4900, "Class": "Helmet"},
+        "Chestplate": {"Name": "Celestial Bronze Chestplate", "DEF": 8, "SP": 1, "MAX DUR": 5200, "DUR": 5200, "Class": "Chestplate"},
+        "Leggings": {"Name": "Admantine Leggings", "DEF": 7, "SP": 2, "MAX DUR": 4800, "DUR": 4800, "Class": "Boots"},
+        "Boots": {"Name": "Reinforced Feather Boots", "DEF": 5, "SP": 3, "MAX DUR": 4700, "DUR": 4700, "Class": "Boots"}
+    },
+    "Troll Swordsman": {
+        "HP": 20000,
+        "ATK": 10000,
+        "DEF": 0,
+        "Crit": 0,
+        "SP": 0,
+        "EXP": 5000,
+        "Weapon": {"Name": "Ghoststeel Sharpsword", "ATK": 20, "SP": 1, "Crit": 5, "MAX DUR": 6000, "DUR": 6000, "Class": "Weapon"},
+        "Left Hand": {"Name": "Starsteel Aegis", "DEF": 15, "SP": 1, "MAX DUR": 6300, "DUR": 6300, "Class": "Shield"},
+        "Helmet": {"Name": "Voidglass Helmet", "DEF": 4, "SP": 1, "MAX DUR": 4800, "DUR": 4800, "Class": "Helmet"},
+        "Chestplate": {"Name": "Voidglass Chestplate", "DEF": 6, "SP": 1, "MAX DUR": 5200, "DUR": 5200, "Class": "Chestplate"},
+        "Leggings": {"Name": "Voidglass Leggings", "DEF": 4, "SP": 2, "MAX DUR": 5000, "DUR": 5000, "Class": "Boots"},
+        "Boots": {"Name": "Voidglass Boots", "DEF": 2, "SP": 3, "MAX DUR": 4700, "DUR": 4700, "Class": "Boots"}
+    }
+}
+
+# ========ENCHANTMENTS=========
+sword1_enchants = [
+    "Sharpness"
+]
+sword2_enchants = [ #  "Unbreaking"
+    "Sharpness", "Thorns", "Unbreakable"
+]
+sword3_enchants = [
+    "Sharpness", "Thorns", "Unbreaking", "Fire Aspect", "Looting"
+]
+shield1_enchants = [
+    "Protection"
+]
+shield2_enchants = [ 
+    "Protection", "Thorns", "Unbreaking"
+]
+shield3_enchants = [
+    "Protection", "Thorns", "Unbreaking", "Divine Guard"
+]
+armor1_enchants = [
+    "Protection", "Fire Protection"
+]
+armor2_enchants = [ # Unbreaking
+    "Protection", "Fire Protection", "Heartforge", "Unbreaking"
+]
+armor3_enchants = [
+    "Protection", "Fire Protection", "FrostGuard", "Heartforge", "Unbreaking"
+]
+
+# ========FISHING=========
+tier1_fish = [
+    ("Minnow", 1), ("Pond Carp", 2), ("Sunfish", 3), ("Bluegill", 4), ("Goldfish", 5),
+    ("Small Fry", 6), ("Silver Shiner", 7), ("Dace", 8), ("Gudgeon", 9), ("Chub", 10),
+    ("Fathead Minnow", 11), ("Mosquitofish", 12), ("Topminnow", 13), ("Killifish", 14), ("Sculpin", 15),
+    ("Stickelback", 16), ("Blenny", 17), ("Gobies", 18), ("Pike Minnow", 19), ("Rainbow Smelt", 20),
+    ("Shiner", 21), ("Whitefish", 22), ("Golden Shiner", 23), ("Silverside", 24), ("Glassfish", 25),
+    ("Round Goby", 26), ("Creek Chub", 27), ("Pygmy Sunfish", 28), ("Black Bullhead", 29), ("Brook Stickleback", 30),
+    ("Northern Hogsucker", 31), ("Rainbow Darter", 32), ("Johnny Darter", 33), ("Fantail Darter", 34), ("Blacknose Dace", 35),
+    ("Longnose Dace", 36), ("Longear Sunfish", 37), ("Pumpkinseed", 38), ("Rock Bass", 39), ("Warmouth", 40),
+    ("Tadpole Madtom", 41), ("Slender Madtom", 42), ("Stonecat", 43), ("Margined Madtom", 44), ("Ozark Madtom", 45),
+    ("Blackside Darter", 46), ("Logperch", 47), ("Sauger", 48), ("Walleye Pollock", 49), ("Grass Carp", 50)
+] # 50
+tier2_fish = [
+    ("Rainbow Trout", 30), ("Smallmouth Bass", 35), ("Walleye", 40), ("Northern Pike", 45), ("Channel Catfish", 50),
+    ("White Bass", 55), ("Yellow Perch", 60), ("Rockfish", 65), ("Crappie", 70), ("Blue Catfish", 75),
+    ("Largemouth Bass", 80), ("Brown Trout", 85), ("Lake Trout", 90), ("Brook Trout", 95), ("Yellowtail Snapper", 100),
+    ("Gizzard Shad", 105), ("Striped Bass", 110), ("Spotted Bass", 115), ("Flathead Catfish", 120), ("Zander", 125),
+    ("Steelhead", 130), ("Red Drum", 135), ("Sheepshead", 140), ("Bluegill Sunfish", 145), ("Pumpkinseed Sunfish", 150),
+    ("Bowfin", 155), ("Grass Pickerel", 160), ("Chain Pickerel", 165), ("Paddlefish", 170), ("Tench", 175),
+    ("White Perch", 180), ("White Crappie", 185), ("Black Crappie", 190), ("Atlantic Salmon", 195), ("Chinook Salmon", 200),
+    ("Coho Salmon", 205), ("Pink Salmon", 210), ("Sockeye Salmon", 215), ("Lake Sturgeon", 220), ("Shovelnose Sturgeon", 225),
+    ("Shortnose Sturgeon", 230), ("Gar", 235), ("Bowfin", 240), ("Bowfin", 245), ("Longnose Gar", 250), ("Alligator Gar", 255),
+    ("Spotted Gar", 260), ("Atlantic Sturgeon", 265), ("White Sturgeon", 270), ("Paddlefish", 275)
+] # 50
+tier3_fish = [
+    ("Salmon", 200), ("Largemouth Bass", 220), ("Steelhead", 240), ("Brown Trout", 260), ("Blue Catfish", 280),
+    ("Muskellunge", 300), ("Arctic Char", 320), ("Golden Dorado", 340), ("Giant Trevally", 360), ("Sturgeon", 380),
+    ("Tarpon", 400), ("Atlantic Bluefin Tuna", 420), ("Marlin", 440), ("Swordfish", 460), ("Barracuda", 480),
+    ("King Mackerel", 500), ("Sailfish", 520), ("Wahoo", 540), ("Grouper", 560), ("Snapper", 580),
+    ("Atlantic Cod", 600), ("Pacific Cod", 620), ("Halibut", 640), ("Pollock", 660), ("Rockfish", 680),
+    ("Lingcod", 700), ("Black Drum", 720), ("Red Snapper", 740), ("White Bass", 760), ("Bluefish", 780),
+    ("Sheepshead", 800), ("Cobia", 820), ("Tilefish", 840), ("Scup", 860), ("Atlantic Herring", 880),
+    ("Pacific Herring", 900), ("Capelin", 920), ("Shad", 940), ("Smelt", 960), ("Menhaden", 980),
+    ("Butterfish", 1000), ("Dogfish", 1020), ("Spiny Dogfish", 1040), ("Smooth Dogfish", 1060), ("Brown Bullhead", 1080),
+    ("Yellow Bullhead", 1100), ("Black Bullhead", 1120), ("White Catfish", 1140), ("Channel Catfish", 1160), ("Flathead Catfish", 1180)
+] # 50
+tier4_fish = [
+    ("Giant Catfish", 1500), ("Megalodon Tooth", 1550), ("Golden Arowana", 1600), ("Giant Trevally", 1650), ("Arapaima", 1700),
+    ("Ocean Sunfish", 1750), ("Giant Grouper", 1800), ("Goliath Grouper", 1850), ("Siberian Sturgeon", 1900), ("White Sturgeon", 1950),
+    ("Alligator Gar", 2000), ("Atlantic Blue Marlin", 2050), ("Pacific Blue Marlin", 2100), ("Black Marlin", 2150), ("Striped Marlin", 2200),
+    ("Swordfish", 2250), ("Giant Trevally", 2300), ("Mekong Giant Catfish", 2350), ("Giant Freshwater Stingray", 2400), ("Pirarucu", 2450),
+    ("Atlantic Goliath Grouper", 2500), ("Pacific Goliath Grouper", 2550), ("Giant Sea Bass", 2600), ("Napoleon Wrasse", 2650), ("Giant Freshwater Pufferfish", 2700),
+    ("Oceanic Whitetip Shark", 2750), ("Great White Shark", 2800), ("Tiger Shark", 2850), ("Bull Shark", 2900), ("Hammerhead Shark", 2950),
+    ("Mako Shark", 3000), ("Thresher Shark", 3050), ("Goblin Shark", 3100), ("Frilled Shark", 3150), ("Megamouth Shark", 3200),
+    ("Wobbegong", 3250), ("Sawfish", 3300), ("Basking Shark", 3350), ("Whale Shark", 3400), ("Manta Ray", 3450),
+    ("Giant Manta Ray", 3500), ("Devil Ray", 3550), ("Eagle Ray", 3600), ("Cownose Ray", 3650), ("Blue Spotted Stingray", 3700)
+] # 45
+tier5_fish = [
+    ("Legendary Leviathan", 5000), ("Mythic Kraken", 5200), ("Ancient Dragonfish", 5400), ("Celestial Marlin", 5600), ("Ethereal Angler", 5800),
+    ("Phantom Serpent", 6000), ("Void Leviathan", 6200), ("Elder Hydra", 6400), ("Titanic Whale", 6600), ("Oceanic Behemoth", 6800),
+    ("Abyssal Horror", 7000), ("Deep Sea Colossus", 7200), ("Kraken's Spawn", 7400), ("Celestial Leviathan", 7600), ("Mythical Sea Dragon", 7800),
+    ("Elder Sea Serpent", 8000), ("Ghost Marlin", 8200), ("Phantasmal Swordfish", 8400), ("Spirit Tuna", 8600), ("Wraith Snapper", 8800),
+    ("Spectral Grouper", 9000), ("Arcane Catfish", 9200), ("Astral Manta", 9400), ("Void Sturgeon", 9600), ("Mythic Goliath Grouper", 9800),
+    ("Legendary Hammerhead", 10000), ("Celestial Shark", 10200), ("Ethereal Mako", 10400), ("Phantom Bull Shark", 10600), ("Spirit Tiger Shark", 10800),
+    ("Ancient Sawfish", 11000), ("Ghostly Wobbegong", 11200), ("Mythic Basking Shark", 11400), ("Elder Whale Shark", 11600), ("Titanic Manta Ray", 11800),
+    ("Celestial Devil Ray", 12000), ("Ethereal Eagle Ray", 12200), ("Phantasmal Cownose Ray", 12400), ("Wraith Blue Spotted Stingray", 12600), ("Spectral Giant Manta Ray", 12800)
+] # 40
+
+# ========GAME FUNCTIONS=========
+def clear_last_line():
+    sys.stdout.write("\033[F")  # Move cursor up one line
+    sys.stdout.write("\033[K")
+
+progress = {
+    "start_time": None,
+    "duration": None,
+    "done": False,
+    "item": None
+}
+def worker(item, duration, string):
+    progress["start_time"] = time.time()
+    progress["duration"] = duration
+    progress["done"] = False
+    progress["item"] = item
+    while True:
+        elapsed = time.time() - progress["start_time"]
+        percent = min(100, int((elapsed / duration) * 100))
+        remaining = max(0.0, duration - elapsed)
+
+        clear()
+        print(f"🛠️ {string} {item}...")
+        print(f"Progress: {percent}% [{'=' * (percent // 5)}{' ' * (20 - percent // 5)}]  ⏳ {remaining:.1f}s left")
+
+        if elapsed >= duration:
+            break
+        time.sleep(0.1)
+
+    progress["done"] = True
+    clear()
+def start(item, action, lower, upper):
+    duration = random.uniform(lower, upper)
+    worker(item, duration, action)
+def timer_loop(seconds):
+    global tournament_active
+    start = time.time()
+    while time.time() - start < seconds:
+        time.sleep(1)
+    tournament_active[0] = False
+    print("\n🏆 Tournament Over!")
+
+enchant_progress = {
+    "start_time": None,
+    "duration": None,
+    "done": False
+}
+def enchantment_worker(duration):
+    enchant_progress["start_time"] = time.time()
+    enchant_progress["duration"] = duration
+    enchant_progress["done"] = False
+    while True:
+        elapsed = time.time() - enchant_progress["start_time"]
+        if elapsed >= duration:
+            enchant_progress["done"] = True
+            break
+        time.sleep(0.2)
+def start_enchant(duration):
+    threading.Thread(target=enchantment_worker, args=(duration,), daemon=True).start()
+    print("✨ Enchantment begun! Do your thing while the crystal does its magic... 🧙‍♀️💠")
+def check_enchantment():
+    if enchant_progress["start_time"] is None:
+        print("🧐 Nothing is being enchanted right now!")
+        return
+
+    print("📡 Enchantment progress ... (press ENTER to return to town 🏙️)")
+
+    while True:
+        if enchant_progress["done"]:
+            return 1
+        else:
+            elapsed = time.time() - enchant_progress["start_time"]
+            remaining = enchant_progress["duration"] - elapsed
+            percent = int((elapsed / enchant_progress["duration"]) * 100)
+            print(f"\r🧪 Enchanting... {percent}% done | {remaining:.1f}s left", end="", flush=True)
+            time.sleep(0.00001)
+        if sys.stdin in select.select([sys.stdin], [], [], 0)[0]:
+            input()  
+            print("\n🚪 You leave the armory and head back to town.")
+            break
+
+def load_players(filename="players.json"):
+    if os.path.exists(filename):
+            if os.path.getsize(filename) == 0:
+                with open(filename, "w") as file:
+                    json.dump({}, file)
+            with open(filename, "r") as file:
+                return json.load(file)
+    else:
+        return {}
+def save_players(players, filename="players.json"):
+    with open(filename, "w") as file:
+        json.dump(players, file, indent=4)
+
+def clear():
+    if platform.system() == "Windows":
+        os.system('cls')
+    else:
+        os.system('clear')
+def type(text, delay=0.01):
+    for char in text:
+        sys.stdout.write(char)
+        sys.stdout.flush()
+        time.sleep(delay)
+    print()
+def fasttype(text, delay=0.005):
+    for char in text:
+        sys.stdout.write(char)
+        sys.stdout.flush()
+        time.sleep(delay)
+    print()
+def chat(text):
+    for char in text:
+        delay = random.choice([0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07])
+        sys.stdout.write(char)
+        sys.stdout.flush()
+        time.sleep(delay)
+    print()
+def quest():
+    print("    _______                    ___________      ________   ___________")
+    print("   /       \\    |          |  |                /                |")
+    print("  /         \\   |          |  |               /                 |")
+    print(" |           |  |          |  |___________   /__________        |")
+    print(" |           |  |          |  |                        /        |")
+    print("  \\        \\\\   \\          /  |                       /         |")
+    print("   \\_______ \\\\   \\________/   |___________   ________/          |")
+    print("\n|----------|")
+    time.sleep(random.uniform(0.5, 3))
+    clear()
+    print("    _______                    ___________      ________   ___________")
+    print("   /       \\    |          |  |                /                |")
+    print("  /         \\   |          |  |               /                 |")
+    print(" |           |  |          |  |___________   /__________        |")
+    print(" |           |  |          |  |                        /        |")
+    print("  \\        \\\\   \\          /  |                       /         |")
+    print("   \\_______ \\\\   \\________/   |___________   ________/          |")
+    print("\n|===-------|")
+    time.sleep(random.uniform(0.5, 3))
+    clear()
+    print("    _______                    ___________      ________   ___________")
+    print("   /       \\    |          |  |                /                |")
+    print("  /         \\   |          |  |               /                 |")
+    print(" |           |  |          |  |___________   /__________        |")
+    print(" |           |  |          |  |                        /        |")
+    print("  \\        \\\\   \\          /  |                       /         |")
+    print("   \\_______ \\\\   \\________/   |___________   ________/          |")
+    print("\n|=====-----|")
+    time.sleep(random.uniform(0.5, 3))
+    clear()
+    print("    _______                    ___________      ________   ___________")
+    print("   /       \\    |          |  |                /                |")
+    print("  /         \\   |          |  |               /                 |")
+    print(" |           |  |          |  |___________   /__________        |")
+    print(" |           |  |          |  |                        /        |")
+    print("  \\        \\\\   \\          /  |                       /         |")
+    print("   \\_______ \\\\   \\________/   |___________   ________/          |")
+    print("\n|=======---|")
+    time.sleep(random.uniform(0.5, 5))
+    clear()
+    print("    _______                    ___________      ________   ___________")
+    print("   /       \\    |          |  |                /                |")
+    print("  /         \\   |          |  |               /                 |")
+    print(" |           |  |          |  |___________   /__________        |")
+    print(" |           |  |          |  |                        /        |")
+    print("  \\        \\\\   \\          /  |                       /         |")
+    print("   \\_______ \\\\   \\________/   |___________   ________/          |")
+    print("\n|==========|")
+    time.sleep(random.uniform(0.5, 2))
+    clear()
+def welcome() -> Dict[str, Any]:
+    os.system('git fetch')
+    os.system('git checkout origin/main -- players.json')
+    players = load_players()
+    clear()
+    name = " "
+    clear()
+    response = int(input("Register or Login (Type 1 for register, 2 for login): "))
+    clear()
+    if response == 1:
+        hi = random.choice(["Yes", "No"])
+        prefix = random.choice(prefixes)
+        middle = random.choice(middles)
+        suffix = random.choice(suffixes)
+        if hi == "Yes":
+            id = random.randint(0, 999)
+            name = f"{prefix}{middle}{suffix}_{id}"
+        else:
+            name = f"{prefix}{middle} {suffix}"
+
+        print(f"Name: {name}")
+        type(f"{name}, welcome to Quest!")
+        print()
+        type("Pick a class:")
+        type("1. Warrior (Medium HP, Medium STR, Medium SP, High Reputation)")
+        type("2. Thief (Low HP, Medium STR, High SP, Low Reputation)")
+        type("3. Berserker (High HP, High STR, Low SP, Medium Reputation)")
+        your_class = input("Which class: ").strip()
+        clear()
+        if your_class == "1" or your_class.lower() == "warrior":
+            player_stats = {
+                "Name": name,
+                "Lvl": 1,
+                "Rank": 10000,
+                "Max EXP": 20,
+                "EXP": 0,
+                "Gold": 50,
+                "Diamond": 1,
+                "Dragonite": 0,
+                "Celestium Prism": 0,
+                "HP": 1700,
+                "STR": 80,
+                "SP": 20,
+                "Crit": 7,
+                "DEF": 70,
+                "Reputation": 5,
+                "Weapon": {"Name": "Wooden Sword", "ATK": 4, "SP": 1, "Crit": 1.5, "DUR": 60, "Class": "Weapon", "Cost": 400},
+                "Left Hand": {"Name": "Wooden Shield", "DEF": 2, "SP": 1, "DUR": 60, "Class": "Shield", "Cost": 400},
+                "Helmet": {},
+                "Chestplate": {},
+                "Leggings": {},
+                "Boots": {},
+                "Backpack": [
+                    {"Name": "Potion of Healing", "Tier": 1, "Effect": 500, "Class": "Potion of Healing", "Cost": 200}
+                ]
+            }
+            #start("Account", "Creating", 6, 12)
+        elif your_class == "2" or your_class.lower() == "thief":
+            player_stats = {
+                "Name": name,
+                "Lvl": 1,
+                "Rank": 10000,
+                "Max EXP": 20,
+                "EXP": 0,
+                "Gold": 100,
+                "Diamond": 1,
+                "Dragonite": 0,
+                "Celestium Prism": 0,
+                "HP": 1300,
+                "STR": 60,
+                "SP": 40,
+                "Crit": 5,
+                "DEF": 50,
+                "Reputation": 1,
+                "Weapon": {"Name": "Dagger", "ATK": 3, "SP": 1.2, "Crit": 1, "DUR": 100, "Class": "Weapon", "Cost": 400},
+                "Left Hand": {"Name": "Leather Shield", "DEF": 1.5, "SP": 1.1, "DUR": 50, "Class": "Shield", "Cost": 400},
+                "Helmet": {},
+                "Chestplate": {},
+                "Leggings": {},
+                "Boots": {},
+                "Backpack": [
+                    {"Name": "Potion of Healing", "Tier": 1, "Effect": 500, "Class": "Potion of Healing", "Cost": 200},
+                    {"Name": "Potion of Strength", "Tier": 1, "Effect": 1.5, "Class": "Potion of Strength", "Cost": 200}
+                ]
+            }
+            #start("Account", "Creating", 6, 12)
+        elif your_class == "3" or your_class.lower() == "berserker":
+            player_stats = {
+                "Name": name,
+                "Lvl": 1,
+                "Rank": 10000,
+                "Max EXP": 20,
+                "EXP": 0,
+                "Gold": 0,
+                "Diamond": 1,
+                "Dragonite": 0,
+                "Celestium Prism": 100000,
+                "HP": 2100,
+                "STR": 110,
+                "SP": 10,
+                "Crit": 10,
+                "DEF": 100,
+                "Reputation": 3,
+                "Weapon": {"Name": "Great Axe", "ATK": 5, "SP": 0.8, "Crit": 2, "DUR": 120, "Class": "Weapon", "Cost": 400},
+                "Left Hand": {"Name": "Rusted Steel Shield", "DEF": 2, "SP": 0.5, "DUR": 70, "Class": "Shield", "Cost": 400},
+                "Helmet": {},
+                "Chestplate": {},
+                "Leggings": {},
+                "Boots": {},
+                "Backpack": [
+                    {"Name": "Potion of Healing", "Tier": 1, "Effect": 500, "Class": "Potion of Healing", "Cost": 200}
+                ]
+            }
+            #start("Account", "Creating", 6, 12)
+        else:
+            type("Invalid choice! Defaulting to Warrior.")
+            player_stats = {
+                "Name": name,
+                "Lvl": 1,
+                "Rank": 10000,
+                "Max EXP": 20,
+                "EXP": 0,
+                "Gold": 50,
+                "Diamond": 1,
+                "Dragonite": 0,
+                "Celestium Prism": 0,
+                "HP": 1700,
+                "STR": 80,
+                "SP": 20,
+                "Crit": 7,
+                "DEF": 70,
+                "Reputation": 5,
+                "Weapon": {"Name": "Wooden Sword", "ATK": 4, "SP": 1, "Crit": 1.5, "DUR": 60, "Class": "Weapon", "Cost": 400},
+                "Left Hand": {"Name": "Wooden Shield", "DEF": 2, "SP": 1, "DUR": 60, "Class": "Shield", "Cost": 400},
+                "Helmet": {},
+                "Chestplate": {},
+                "Leggings": {},
+                "Boots": {},
+                "Backpack": [
+                    {"Name": "Potion of Healing", "Tier": 1, "Effect": 500, "Class": "Potion of Healing", "Cost": 200}
+                ]
+            }
+            #start("Account", "Creating", 6, 12)
+        return player_stats
+
+    elif response == 2:
+        name = input("Enter your name: ")
+        clear()
+        if name in players:
+            type(f"Welcome back, {name}! \n")
+            time.sleep(0.5)
+            clear()
+            #start("Player Stats", "Loading", 2, 5)
+            clear()
+            return players[name]
+        else:
+            type("Invalid name! Creating a new account. Defaulting to Warrior.")
+            time.sleep(1)
+            player_stats = {
+                "Name": name,
+                "Lvl": 1,
+                "Rank": 10000,
+                "Max EXP": 20,
+                "EXP": 0,
+                "Gold": 50,
+                "Diamond": 1,
+                "Dragonite": 0,
+                "Celestium Prism": 0,
+                "HP": 1700,
+                "STR": 80,
+                "SP": 20,
+                "Crit": 7,
+                "DEF": 70,
+                "Reputation": 5,
+                "Weapon": {"Name": "Wooden Sword", "ATK": 4, "SP": 1, "Crit": 1.5, "DUR": 60, "Class": "Weapon", "Cost": 400},
+                "Left Hand": {"Name": "Wooden Shield", "DEF": 2, "SP": 1, "DUR": 60, "Class": "Shield", "Cost": 400},
+                "Helmet": {},
+                "Chestplate": {},
+                "Leggings": {},
+                "Boots": {},
+                "Backpack": [
+                    {"Name": "Potion of Healing", "Tier": 1, "Effect": 500, "Class": "Potion of Healing", "Cost": 200}
+                ]
+            }
+            #start("Account", "Creating", 6, 12)
+            return player_stats
+    else:
+        type("Invalid choice! Creating a new account. Defaulting to Warrior.")
+        player_stats = {
+            "Name": name,
+            "Lvl": 1,
+            "Rank": 10000,
+            "Max EXP": 20,
+            "EXP": 0,
+            "Gold": 50,
+            "Diamond": 1,
+            "Dragonite": 0,
+            "Celestium Prism": 0,
+            "HP": 1700,
+            "STR": 80,
+            "SP": 20,
+            "Crit": 7,
+            "DEF": 70,
+            "Reputation": 5,
+            "Weapon": {"Name": "Wooden Sword", "ATK": 4, "SP": 1, "Crit": 1.5, "DUR": 60, "Class": "Weapon", "Cost": 400},
+            "Left Hand": {"Name": "Wooden Shield", "DEF": 2, "SP": 1, "DUR": 60, "Class": "Shield", "Cost": 400},
+            "Helmet": {},
+            "Chestplate": {},
+            "Leggings": {},
+            "Boots": {},
+            "Backpack": [
+                {"Name": "Potion of Healing", "Tier": 1, "Effect": 500, "Class": "Potion of Healing", "Cost": 200}
+            ]
+        }
+        #start("Account", "Creating", 6, 12)
+        return player_stats
+
+
+
+# =========VARIABLES=========
 players = load_players()
 block = 0
 stats = welcome()
@@ -3284,6 +4217,7 @@ def tips():
         if hi is not None:
             print("")
 
+#MAIN MENU
 while option != 14:
     os.system('git add players.json')
     os.system('git commit -m "player save"')
