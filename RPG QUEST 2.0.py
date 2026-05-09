@@ -1,4 +1,5 @@
-from typing import Any, Dict
+from typing import Any, Dict, Tuple
+import copy
 import threading
 import platform
 import select
@@ -7,6 +8,9 @@ import time
 import json
 import sys
 import os
+import importlib.util
+
+from arena_combat import run_arena_style_combat as _arena_combat_engine
 
 '''
 1. Starlight Armory - Enchantment ✅
@@ -447,46 +451,49 @@ monsters = {
 }
 boss = {
     "Troll Elite Commander": {
-        "HP": 20000,
-        "ATK": 1500,
-        "DEF": 1000,
-        "Crit": 50,
-        "SP": 50,
-        "EXP": 5000,
-        "Weapon": {"Name": "Starforged Etherium Double-Edged Sharpsword", "ATK": 10, "SP": 2, "Crit": 3, "MAX DUR": 5000, "DUR": 5000, "Class": "Weapon"},
-        "Left Hand": {"Name": "Nethersteel Jagged Shield", "DEF": 5, "SP": 3, "MAX DUR": 5500, "DUR": 5500, "Class": "Shield"},
-        "Helmet": {"Name": "Stormforged Phantom Iron Helmet", "DEF": 7, "SP": 1, "MAX DUR": 4800, "DUR": 4800, "Class": "Helmet"},
-        "Chestplate": {"Name": "Voidcrystal Chestplate", "DEF": 10, "SP": 1, "MAX DUR": 6000, "DUR": 6000, "Class": "Chestplate"},
-        "Leggings": {"Name": "Bloodiron Leggings", "DEF": 7, "SP": 2, "MAX DUR": 5200, "DUR": 5200, "Class": "Boots"},
-        "Boots": {"Name": "Abyssal Gold Boots", "DEF": 5, "SP": 3, "MAX DUR": 5100, "DUR": 5100, "Class": "Boots"}
+        "HP": 4800,
+        "ATK": 72,
+        "DEF": 28,
+        "Crit": 10,
+        "SP": 14,
+        "EXP": 450,
+        "Prisms": 1,
+        "Weapon": {"Name": "Starforged Etherium Double-Edged Sharpsword", "ATK": 3.6, "SP": 2, "Crit": 3, "MAX DUR": 5000, "DUR": 5000, "Class": "Weapon"},
+        "Left Hand": {"Name": "Nethersteel Jagged Shield", "DEF": 2.2, "SP": 3, "MAX DUR": 5500, "DUR": 5500, "Class": "Shield"},
+        "Helmet": {"Name": "Stormforged Phantom Iron Helmet", "DEF": 2.8, "SP": 1, "MAX DUR": 4800, "DUR": 4800, "Class": "Helmet"},
+        "Chestplate": {"Name": "Voidcrystal Chestplate", "DEF": 3.5, "SP": 1, "MAX DUR": 6000, "DUR": 6000, "Class": "Chestplate"},
+        "Leggings": {"Name": "Bloodiron Leggings", "DEF": 2.5, "SP": 2, "MAX DUR": 5200, "DUR": 5200, "Class": "Boots"},
+        "Boots": {"Name": "Abyssal Gold Boots", "DEF": 2.0, "SP": 3, "MAX DUR": 5100, "DUR": 5100, "Class": "Boots"}
     },
     "Goblin Sergeant": {
-        "HP": 20000, 
-        "ATK": 5000, 
-        "DEF": 3000, 
-        "Crit": 100,
-        "SP": 0,
-        "EXP": 5000,
-        "Weapon": {"Name": "Great Damascus Sword", "ATK": 6, "SP": 1, "Crit": 3, "MAX DUR": 4600, "DUR": 4600, "Class": "Weapon"},
-        "Left Hand": {"Name": "Crusader Round Shield", "DEF": 2, "SP": 1.25, "MAX DUR": 4300, "DUR": 4300, "Class": "Shield"},
-        "Helmet": {"Name": "Celestial Bronze Helmet", "DEF": 7, "SP": 1, "MAX DUR": 4900, "DUR": 4900, "Class": "Helmet"},
-        "Chestplate": {"Name": "Celestial Bronze Chestplate", "DEF": 8, "SP": 1, "MAX DUR": 5200, "DUR": 5200, "Class": "Chestplate"},
-        "Leggings": {"Name": "Admantine Leggings", "DEF": 7, "SP": 2, "MAX DUR": 4800, "DUR": 4800, "Class": "Boots"},
-        "Boots": {"Name": "Reinforced Feather Boots", "DEF": 5, "SP": 3, "MAX DUR": 4700, "DUR": 4700, "Class": "Boots"}
+        "HP": 6200,
+        "ATK": 78,
+        "DEF": 32,
+        "Crit": 12,
+        "SP": 15,
+        "EXP": 700,
+        "Prisms": 2,
+        "Weapon": {"Name": "Great Damascus Sword", "ATK": 4.2, "SP": 1, "Crit": 3, "MAX DUR": 4600, "DUR": 4600, "Class": "Weapon"},
+        "Left Hand": {"Name": "Crusader Round Shield", "DEF": 2.0, "SP": 1.25, "MAX DUR": 4300, "DUR": 4300, "Class": "Shield"},
+        "Helmet": {"Name": "Celestial Bronze Helmet", "DEF": 3.2, "SP": 1, "MAX DUR": 4900, "DUR": 4900, "Class": "Helmet"},
+        "Chestplate": {"Name": "Celestial Bronze Chestplate", "DEF": 3.8, "SP": 1, "MAX DUR": 5200, "DUR": 5200, "Class": "Chestplate"},
+        "Leggings": {"Name": "Admantine Leggings", "DEF": 2.6, "SP": 2, "MAX DUR": 4800, "DUR": 4800, "Class": "Boots"},
+        "Boots": {"Name": "Reinforced Feather Boots", "DEF": 2.0, "SP": 3, "MAX DUR": 4700, "DUR": 4700, "Class": "Boots"}
     },
     "Troll Swordsman": {
-        "HP": 20000,
-        "ATK": 10000,
-        "DEF": 0,
-        "Crit": 0,
-        "SP": 0,
-        "EXP": 5000,
-        "Weapon": {"Name": "Ghoststeel Sharpsword", "ATK": 20, "SP": 1, "Crit": 5, "MAX DUR": 6000, "DUR": 6000, "Class": "Weapon"},
-        "Left Hand": {"Name": "Starsteel Aegis", "DEF": 15, "SP": 1, "MAX DUR": 6300, "DUR": 6300, "Class": "Shield"},
-        "Helmet": {"Name": "Voidglass Helmet", "DEF": 4, "SP": 1, "MAX DUR": 4800, "DUR": 4800, "Class": "Helmet"},
-        "Chestplate": {"Name": "Voidglass Chestplate", "DEF": 6, "SP": 1, "MAX DUR": 5200, "DUR": 5200, "Class": "Chestplate"},
-        "Leggings": {"Name": "Voidglass Leggings", "DEF": 4, "SP": 2, "MAX DUR": 5000, "DUR": 5000, "Class": "Boots"},
-        "Boots": {"Name": "Voidglass Boots", "DEF": 2, "SP": 3, "MAX DUR": 4700, "DUR": 4700, "Class": "Boots"}
+        "HP": 7500,
+        "ATK": 88,
+        "DEF": 24,
+        "Crit": 16,
+        "SP": 22,
+        "EXP": 1100,
+        "Prisms": 3,
+        "Weapon": {"Name": "Ghoststeel Sharpsword", "ATK": 5.2, "SP": 1, "Crit": 5, "MAX DUR": 6000, "DUR": 6000, "Class": "Weapon"},
+        "Left Hand": {"Name": "Starsteel Aegis", "DEF": 3.8, "SP": 1, "MAX DUR": 6300, "DUR": 6300, "Class": "Shield"},
+        "Helmet": {"Name": "Voidglass Helmet", "DEF": 2.2, "SP": 1, "MAX DUR": 4800, "DUR": 4800, "Class": "Helmet"},
+        "Chestplate": {"Name": "Voidglass Chestplate", "DEF": 3.0, "SP": 1, "MAX DUR": 5200, "DUR": 5200, "Class": "Chestplate"},
+        "Leggings": {"Name": "Voidglass Leggings", "DEF": 2.4, "SP": 2, "MAX DUR": 5000, "DUR": 5000, "Class": "Boots"},
+        "Boots": {"Name": "Voidglass Boots", "DEF": 1.6, "SP": 3, "MAX DUR": 4700, "DUR": 4700, "Class": "Boots"}
     }
 }
 
@@ -689,6 +696,186 @@ def fasttype(text, delay=0.005):
         sys.stdout.flush()
         time.sleep(delay)
     print()
+
+def run_arena_style_combat(stats: Dict[str, Any], foe: Dict[str, Any]) -> Tuple[bool, int]:
+    return _arena_combat_engine(stats, foe, type, clear, fasttype)
+
+def grant_exp(stats: Dict[str, Any], amount: float) -> None:
+    stats["EXP"] = stats.get("EXP", 0) + amount
+    while stats["EXP"] >= stats["Max EXP"]:
+        over = stats["EXP"] - stats["Max EXP"]
+        stats["Lvl"] += 1
+        stats["Max EXP"] += 20
+        stats["EXP"] = over
+
+def _apply_arena_rewards(stats: Dict[str, Any], won: bool, foe_lvl: int, turns: int) -> None:
+    if not won:
+        type("You limp away from the arena...")
+        time.sleep(0.8)
+        clear()
+        return
+    base_exp = max(25, foe_lvl * 6)
+    speed_bonus = max(0, int(35 - turns * 2))
+    total_exp = base_exp + speed_bonus
+    grant_exp(stats, float(total_exp))
+    gold_gain = foe_lvl * 22 + speed_bonus * 4
+    stats["Gold"] += gold_gain
+    stats["Reputation"] = stats.get("Reputation", 0) + 1
+    type(f"Victory spoils: +{total_exp} EXP (speed bonus included), +{gold_gain} gold, +1 reputation.")
+    time.sleep(0.9)
+    clear()
+
+def build_duel_foe_from_key(enemy_players: Dict[Any, Dict[str, Any]], p_key: Any) -> Dict[str, Any]:
+    """Build combat foe dict compatible with arena_combat from an arena challenger entry."""
+    foe_lvl_roll = max(1, int(enemy_players[p_key]["lvl"]))
+    wroll = random.randint(1, 100)
+    if wroll <= 70 - foe_lvl_roll:
+        foe_weapon = random.choice(swords)
+    else:
+        foe_weapon = random.choice(elite_swords)
+    arena_shields = [
+        {"Name": "Reinforced Bark Shield", "DEF": 1.5, "SP": 0.8, "MAX DUR": 900, "DUR": 900, "Cost": 7000, "Class": "Shield"},
+        {"Name": "Rusty Steel Shield", "DEF": 1.3, "SP": 0.8, "MAX DUR": 1000, "DUR": 1000, "Cost": 5000, "Class": "Shield"},
+        {"Name": "Chainmail Shield", "DEF": 1.2, "SP": 0.9, "MAX DUR": 850, "DUR": 850, "Cost": 5000, "Class": "Shield"},
+        {"Name": "Reinforced Leather Shield", "DEF": 1.5, "SP": 1, "MAX DUR": 1150, "DUR": 1150, "Cost": 9000, "Class": "Shield"},
+        {"Name": "Wooden Shield", "DEF": 2, "SP": 1, "MAX DUR": 60, "DUR": 60, "Cost": 14000, "Class": "Shield"},
+        {"Name": "Rusted Steel Shield", "DEF": 1.3, "SP": 0.8, "MAX DUR": 1000, "DUR": 1000, "Cost": 4000, "Class": "Shield"},
+        {"Name": "Leather Shield", "DEF": 1.5, "SP": 1, "MAX DUR": 1150, "DUR": 1150, "Cost": 8000, "Class": "Shield"}
+    ]
+    foe_shield = random.choice(arena_shields)
+    chestplate_roll = random.randint(1, 100)
+    if chestplate_roll <= 70 - foe_lvl_roll:
+        foe_chest = random.choice(chestplates)
+    else:
+        foe_chest = None
+    helmet_roll = random.randint(1, 100)
+    if helmet_roll <= 70 - foe_lvl_roll:
+        foe_helmet = random.choice(helmets)
+    else:
+        foe_helmet = None
+    legging_roll = random.randint(1, 100)
+    if legging_roll <= 70 - foe_lvl_roll:
+        foe_legging = random.choice(leggings)
+    else:
+        foe_legging = None
+    boot_roll = random.randint(1, 100)
+    if boot_roll <= 70 - foe_lvl_roll:
+        foe_boot = random.choice(boots)
+    else:
+        foe_boot = None
+    enemyhp = 1700
+    enemystr = 150
+    enemydef = 70
+    enemycrit = 7
+    enemysp = 20
+    if foe_lvl_roll <= 0:
+        buff_times = 1
+    else:
+        buff_times = foe_lvl_roll
+    for _ in range(buff_times):
+        bt = random.choice(["HP", "ATK", "DEF", "SP", "CRIT"]).lower()
+        if bt == "hp":
+            enemyhp += 200
+        elif bt == "atk":
+            enemystr += 10
+        elif bt == "def":
+            enemydef += 20
+        elif bt == "sp":
+            enemysp += 2.5
+        elif bt == "crit":
+            enemycrit += 0.5
+    return {
+        "name": enemy_players[p_key]["name"],
+        "lvl": enemy_players[p_key]["lvl"],
+        "enemyhp": enemyhp,
+        "enemystr": enemystr,
+        "enemydef": enemydef,
+        "enemycrit": enemycrit,
+        "enemysp": enemysp,
+        "weapon": foe_weapon,
+        "shield": foe_shield,
+        "helmet": foe_helmet,
+        "chestplate": foe_chest,
+        "legging": foe_legging,
+        "boot": foe_boot,
+    }
+
+def roll_random_arena_npc(player_stats: Dict[str, Any]) -> Dict[str, Any]:
+    rank = random.randint(player_stats["Rank"] - 1000, player_stats["Rank"] + 1000)
+    hi = random.choice(["Yes", "No"])
+    prefix = random.choice(prefixes)
+    middle = random.choice(middles)
+    suffix = random.choice(suffixes)
+    if hi == "Yes":
+        nid = random.randint(0, 999)
+        player_name = f"{prefix}{middle}{suffix}_{nid}"
+    else:
+        player_name = f"{prefix}{middle} {suffix}"
+    lvl = random.randint(max(1, player_stats["Lvl"] - 10), player_stats["Lvl"] + 10)
+    challenger = {0: {"name": player_name, "rank": rank, "lvl": lvl}}
+    return build_duel_foe_from_key(challenger, 0)
+
+def foe_from_boss_entry(player_stats: Dict[str, Any], boss_title: str, bdata: Dict[str, Any]) -> Dict[str, Any]:
+    return {
+        "name": boss_title,
+        "lvl": max(1, player_stats["Lvl"]),
+        "enemyhp": bdata["HP"],
+        "enemystr": bdata["ATK"],
+        "enemydef": bdata["DEF"],
+        "enemycrit": bdata["Crit"],
+        "enemysp": bdata["SP"],
+        "weapon": copy.deepcopy(bdata["Weapon"]),
+        "shield": copy.deepcopy(bdata["Left Hand"]),
+        "helmet": copy.deepcopy(bdata["Helmet"]),
+        "chestplate": copy.deepcopy(bdata["Chestplate"]),
+        "legging": copy.deepcopy(bdata["Leggings"]),
+        "boot": copy.deepcopy(bdata["Boots"]),
+    }
+
+def adventure() -> None:
+    global stats
+    start("Adventure", "Seeking riches in Rotfang Depths", 3, 6)
+    clear()
+    rotfang_depths()
+
+def rotfang_depths() -> None:
+    global stats
+    type("Cold wind rises from Rotfang Depths. Bosses guarding Celestium Prisms stir below.\n")
+    time.sleep(0.35)
+    names = list(boss.keys())
+    for i, n in enumerate(names, start=1):
+        prism_ct = boss[n].get("Prisms", 1)
+        type(f"{i}. {n} (~{boss[n]['EXP']} EXP · {prism_ct} prism(s))")
+        time.sleep(0.05)
+    pick = int(input("Choose a foe (number), or 0 to leave: "))
+    clear()
+    if pick == 0:
+        type("You climb back toward town.\n")
+        time.sleep(0.4)
+        clear()
+        return
+    title = names[pick - 1]
+    bdata = boss[title]
+    type(f"You drop into the depths to challenge {title}!")
+    time.sleep(0.85)
+    clear()
+    foe = foe_from_boss_entry(stats, title, bdata)
+    won, turns = run_arena_style_combat(stats, foe)
+    if won:
+        prisms = bdata.get("Prisms", 1)
+        stats["Celestium Prism"] = stats.get("Celestium Prism", 0) + prisms
+        boss_exp = float(bdata.get("EXP", 400))
+        grant_exp(stats, boss_exp + max(50, stats["Lvl"] * 5))
+        gold_bonus = boss_exp + turns * 3
+        stats["Gold"] += int(gold_bonus)
+        stats["Reputation"] = stats.get("Reputation", 0) + 2
+        type(f"{title} falls! Celestium Prisms gained: +{prisms}. Bonus gold: +{int(gold_bonus)}.")
+        time.sleep(0.9)
+    else:
+        type("You barely escape Rotfang Depths alive...")
+        time.sleep(0.9)
+    clear()
+
 def chat(text):
     for char in text:
         delay = random.choice([0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07])
@@ -1004,7 +1191,16 @@ def arena():
     gamemode = int(input("Which game mode would you like to play: "))
     clear()
     if gamemode == 1:
-        print()
+        start("Arena", "Sharpening blades for", 2, 3.6)
+        clear()
+        foe = roll_random_arena_npc(stats)
+        type(f"You face {foe['name']} (Lvl {foe['lvl']})!\n")
+        time.sleep(0.85)
+        clear()
+        won, turns = run_arena_style_combat(stats, foe)
+        _apply_arena_rewards(stats, won, foe["lvl"], turns)
+        return
+
     elif gamemode == 2:
         yesorno = input("Start tutorial? (yes/no): ").lower()
         clear()
@@ -1015,24 +1211,19 @@ def arena():
             ======================================
 
             Overview:
-            Duel Clash is a competitive mode where two teams battle in a series of randomized one-on-one duels.
+            Your squad cheers you on as you duel each challenger from the enemy roster — one duel at a time.
 
             How It Works:
-            - Two teams of equal size enter the match.
-            - At the start of each round, one fighter from each team is chosen at random.
-            - The duel continues until one fighter is defeated.
-            - The winning team earns 1 point for that duel.
-            - A new random pairing is selected from the remaining players for the next duel.
-            - Each player only fights once per match.
-            - After all duels are complete, the team with the most victories wins.
-            - If the score is tied, a sudden-death duel is fought between random players.
+            - Two teams parade while you represent your faction in the cage.
+            - Opponents from the opposing roster rotate in randomized order until you lose or wipe their bench.
+            - Each victory scores for your backers; losing a duel stops the clash run.
+            - Between rounds there is only the roar of the crowd — conserve potions wisely.
 
             Victory Condition:
-            The team with the most duel wins at the end of the match is declared the champion.
+            Defeat everyone on their roster without being knocked out to claim a sweep bonus.
 
             ======================================
             """
-
             fasttype(description)
             hi = int(input("Press 1 to continue: "))
             clear()
@@ -1044,13 +1235,12 @@ def arena():
             time.sleep(1)
         type("Your Team: ")
         type("=====================================")
-        for i in range(4):
+        for _ in range(4):
             times = random.randint(0, 5)
-            for i in range(times):
-                dots = "." * ((i % 3) + 1)  
-                print(dots.ljust(3), end='\r')  
+            for j in range(times):
+                dots = "." * ((j % 3) + 1)
+                print(dots.ljust(3), end='\r')
                 time.sleep(0.4)
-
             print("   ", end='\r')
             rank = random.randint(stats["Rank"] - 1000, stats["Rank"] + 1000)
             hi = random.choice(["Yes", "No"])
@@ -1058,19 +1248,13 @@ def arena():
             middle = random.choice(middles)
             suffix = random.choice(suffixes)
             if hi == "Yes":
-                id = random.randint(0, 999)
-                player_name = f"{prefix}{middle}{suffix}_{id}"
+                pid = random.randint(0, 999)
+                player_name = f"{prefix}{middle}{suffix}_{pid}"
             else:
                 player_name = f"{prefix}{middle} {suffix}"
             ID = random.randint(0, 100000)
-            lvl = random.randint(stats["Lvl"] - 10, stats["Lvl"] + 10)
-
-            your_players[ID] = {
-                "name": player_name,
-                "rank": rank,
-                "lvl": lvl
-            }
-
+            lvl = random.randint(max(1, stats["Lvl"] - 10), stats["Lvl"] + 10)
+            your_players[ID] = {"name": player_name, "rank": rank, "lvl": lvl}
             print("---------------------------------------------------------------------")
             print(f"{player_name} | Lvl: {lvl} | ID: {ID} | Rank: {rank}")
             print("---------------------------------------------------------------------\n")
@@ -1078,13 +1262,12 @@ def arena():
         type("=====================================\n")
         type("Opponent's Team: ")
         type("=====================================")
-        for i in range(5):
+        for _ in range(5):
             times = random.randint(0, 5)
-            for i in range(times):
-                dots = "." * ((i % 3) + 1)  
-                print(dots.ljust(3), end='\r')  
+            for j in range(times):
+                dots = "." * ((j % 3) + 1)
+                print(dots.ljust(3), end='\r')
                 time.sleep(0.4)
-
             print("   ", end='\r')
             rank = random.randint(stats["Rank"] - 1000, stats["Rank"] + 1000)
             hi = random.choice(["Yes", "No"])
@@ -1092,736 +1275,52 @@ def arena():
             middle = random.choice(middles)
             suffix = random.choice(suffixes)
             if hi == "Yes":
-                id = random.randint(0, 999)
-                player_name = f"{prefix}{middle}{suffix}_{id}"
+                pid = random.randint(0, 999)
+                player_name = f"{prefix}{middle}{suffix}_{pid}"
             else:
                 player_name = f"{prefix}{middle} {suffix}"
             ID = random.randint(0, 100000)
-            lvl = random.randint(stats["Lvl"] - 10, stats["Lvl"] + 10)
-
-            enemy_players[ID] = {
-                "name": player_name,
-                "rank": rank,
-                "lvl": lvl
-            }
-
+            lvl = random.randint(max(1, stats["Lvl"] - 10), stats["Lvl"] + 10)
+            enemy_players[ID] = {"name": player_name, "rank": rank, "lvl": lvl}
             print("---------------------------------------------------------------------")
             print(f"{player_name} | Lvl: {lvl} | ID: {ID} | Rank: {rank}")
             print("---------------------------------------------------------------------\n")
             time.sleep(0.5)
         type("=====================================\n")
-        time.sleep(5)
-        clear()
         start("Match", "Starting", 4, 10)
         clear()
-        p = random.choice(list(enemy_players.keys()))
-        type(f"You are fighting against {enemy_players[p]['name']}!")
-        time.sleep(1)
-        clear()
-        helmet = None
-        legging = None
-        boot = None
-        weapon = random.randint(1, 100)
-        if weapon <= 70 - enemy_players[p]["lvl"]:
-            weapon = random.choice(swords)
-        else:
-            weapon = random.choice(elite_swords)
-        shield = random.randint(1, 100)
-        shields = [
-            {"Name": "Reinforced Bark Shield", "DEF": 1.5, "SP": 0.8, "MAX DUR": 900, "DUR": 900, "Cost": 7000, "Class": "Shield"},
-            {"Name": "Rusty Steel Shield", "DEF": 1.3, "SP": 0.8, "MAX DUR": 1000, "DUR": 1000, "Cost": 5000, "Class": "Shield"}, 
-            {"Name": "Chainmail Shield", "DEF": 1.2, "SP": 0.9, "MAX DUR": 850, "DUR": 850, "Cost": 5000, "Class": "Shield"},
-            {"Name": "Reinforced Leather Shield", "DEF": 1.5, "SP": 1, "MAX DUR": 1150, "DUR": 1150, "Cost": 9000, "Class": "Shield"},
-            {"Name": "Wooden Shield", "DEF": 2, "SP": 1, "MAX DUR": 60, "DUR": 60, "Cost": 14000, "Class": "Shield"},
-            {"Name": "Rusted Steel Shield", "DEF": 1.3, "SP": 0.8, "MAX DUR": 1000, "DUR": 1000, "Cost": 4000, "Class": "Shield"},
-            {"Name": "Leather Shield", "DEF": 1.5, "SP": 1, "MAX DUR": 1150, "DUR": 1150, "Cost": 8000, "Class": "Shield"}
-        ]
-        shield = random.choice(shields)
-        chestplate = random.randint(1, 100)
-        if chestplate <= 70 - enemy_players[p]["lvl"]:
-            chestplate = random.choice(chestplates)
-        else:
-            chestplate = None
-        helmet = random.randint(1, 100)
-        if helmet <= 70 - enemy_players[p]["lvl"]:
-            helmet = random.choice(helmets)
-        else:
-            helmet = None
-        legging = random.randint(1, 100)
-        if legging <= 70 - enemy_players[p]["lvl"]:
-            legging = random.choice(leggings)
-        else:
-            legging = None
-        boot = random.randint(1, 100)
-        if boot <= 70 - enemy_players[p]["lvl"]:
-            boot = random.choice(boots)
-        else:
-            boot = None
-        enemyhp = 1700
-        enemystr = 150
-        enemydef = 70
-        enemycrit = 7
-        enemysp = 20
-        dead = False
-        yourhp = stats["HP"]
-        if enemy_players[p]["lvl"] <= 0:
-            times = 1
-        else:
-            times = enemy_players[p]["lvl"]
-        for i in range(times):
-            typee = random.choice(["HP", "ATK", "DEF", "SP", "CRIT"]).lower()
-            if typee == "hp":
-                enemyhp += 200
-            elif typee == "atk":
-                enemystr += 10
-            elif typee == "def":
-                enemydef += 20
-            elif typee == "sp":
-                enemysp += 2.5
-            elif typee == "crit":
-                enemycrit += 0.5
-        fire = False 
-        effect = 0
-        turn = 0
+        enemy_order = list(enemy_players.keys())
+        random.shuffle(enemy_order)
         wins = 0
-        win = False
-        attack = 0
-        damage = 0
-        yourhp = stats["HP"]
-        yourstr = stats["STR"]
-        yourdef = stats["DEF"]
-        while True:
-            if dead:
-                type("You defeated your opponent!")
-                time.sleep(1)
-                clear()
-                win = True
+        sweep = True
+        for duel_idx, opp_key in enumerate(enemy_order, start=1):
+            type(f"Duel Clash — round {duel_idx} of {len(enemy_order)}.\n")
+            foe = build_duel_foe_from_key(enemy_players, opp_key)
+            type(f"You clash with {foe['name']} (Lvl {foe['lvl']})!\n")
+            time.sleep(0.85)
+            clear()
+            won, turns = run_arena_style_combat(stats, foe)
+            if won:
+                wins += 1
+                type(f"Ladder score: your squad {wins} — {(len(enemy_order) - wins)} foes still itching to fight.")
+                _apply_arena_rewards(stats, True, foe["lvl"], turns)
+            else:
+                sweep = False
+                _apply_arena_rewards(stats, False, foe["lvl"], turns)
                 break
-            turn += 1
-            dodge = False
-            if fire and effect != 0:
-                effect -= 1
-                print("Enemy is burning! They take", 250 + (stats["Weapon"]["Tier"] * 50), "damage!")
-                enemyhp -= 250 + (stats["Weapon"]["Tier"] * 50)
-                if enemyhp <= 0:
-                    type("You defeated your opponent!")
-                    time.sleep(1)
-                    clear()
-                    win = True
-                    break
-            print(f"Your HP: {yourhp}")
-            print("========================\n")
-            time.sleep(0.1)
-            print("1. Attack\n")
-            time.sleep(0.1)
-            print("2. Use Left Hand\n")
-            time.sleep(0.1)
-            print("3. Use Potion\n")
-            time.sleep(0.1)
-            print("4. View Enemy Stats\n")
-            time.sleep(0.1)
-            print("=======================\n")
-            time.sleep(0.1)
-            attack = int(input("Enter a number: "))
+        if sweep and wins == len(enemy_order):
+            bonus = 850 + stats["Lvl"] * 50
+            stats["Gold"] += bonus
+            stats["Reputation"] = stats.get("Reputation", 0) + 4
+            type(f"Sweep secured! Sponsor bonus gold +{bonus} and prestige +4.\n")
+            time.sleep(0.9)
             clear()
-            events = [
-                "You swing your sword and strike the opponent!",
-                "You lunge forward with a fierce attack!",
-                "Your blade clashes against their armor, sparks flying!",
-                "You feint to the left and slash quickly!",
-                "You charge with a powerful overhead strike!",
-                "You stab forward, narrowly piercing their guard!",
-                "You spin with deadly precision and land a cut!",
-                "You bash your opponent with the hilt of your weapon!",
-                "Your strike glances off, but you press the attack!",
-                "You unleash a flurry of quick strikes!",
-                "You slash diagonally, leaving a deep gash!",
-                "You thrust with unrelenting force!",
-                "You sweep low, striking at their legs!",
-                "You hammer down with both hands on your weapon!",
-                "You strike twice in rapid succession!",
-                "You faint a retreat, then slash suddenly!",
-                "You clash blades and overpower your foe!",
-                "You swing from the side and knock them off balance!",
-                "You leap forward and bring your blade down hard!",
-                "You carve across their armor with brutal strength!"
-            ]
 
-            miss_events = [
-                "You swing wildly, but the opponent dodges!",
-                "Your strike misses by an inch!",
-                "You stumble forward as your attack whiffs!",
-                "The opponent parries and leaves you open!",
-                "Your blade cuts only the air!",
-                "You charge in, but the enemy sidesteps easily!",
-                "Your attack bounces harmlessly off their shield!",
-                "You overextend, leaving yourself unbalanced!",
-                "The enemy ducks just in time to avoid your swing!",
-                "You misjudge the distance and your strike falls short!",
-                "Your blow is deflected effortlessly!",
-                "You slip as you swing, losing momentum!",
-                "The opponent spins away from your attack!",
-                "You hit nothing but sparks as your strike glances off!",
-                "The enemy blocks and counters swiftly!",
-                "You overreach, exposing your guard!",
-                "You strike too early, missing completely!",
-                "Your weapon lodges into the ground instead of the enemy!",
-                "You swing overhead, but they roll aside!",
-                "Your attack is easily sidestepped with a smirk!"
-            ]
-
-            fire_events = [
-                "Your enchanted blade ignites, setting the opponent aflame!",
-                "Sparks erupt as your sword burns through their armor!",
-                "Flames dance along your weapon, scorching your foe!",
-                "Your fiery strike leaves the enemy screaming in pain!",
-                "You slash across, and fire trails linger on their wounds!",
-                "The blade crackles with heat, searing the opponent’s flesh!",
-                "A burst of flame explodes from your sword, engulfing them!",
-                "You strike true, and fire spreads rapidly across their body!",
-                "Your weapon blazes brightly, reducing their guard to ashes!",
-                "A single fiery slash sets the battlefield alight!",
-                "Fire erupts in a spiral from your swing!",
-                "The air burns as your flaming strike lands!",
-                "Your weapon scorches their armor to molten slag!",
-                "You carve across, flames spreading from the wound!",
-                "Heat radiates so strongly the enemy staggers back!",
-                "You unleash a flaming arc, searing everything before you!",
-                "The flames cling to your foe, refusing to die out!",
-                "Your sword explodes in embers on impact!",
-                "You burn their shield away with relentless fire!",
-                "Your blade leaves a blazing scar across the battlefield!"
-            ]
-
-            crit_events = [
-                "💥 Critical hit! Your strike shatters the enemy’s defense!",
-                "⚡ A devastating blow lands squarely, dealing massive damage!",
-                "🔥 You find the perfect opening and unleash a lethal strike!",
-                "💢 Your weapon tears through with pinpoint precision!",
-                "💀 A brutal critical! The opponent staggers backward in agony!",
-                "🔪 You land a vicious slash, doubling the devastation!",
-                "⚔️ Your blade finds a weak spot — CRITICAL DAMAGE!",
-                "🌟 With flawless timing, you deliver a critical blow!",
-                "💣 A thunderous strike smashes through their guard!",
-                "👊 Your hit lands with crushing force — a perfect crit!",
-                "⚡ Lightning precision! You pierce their core defenses!",
-                "💥 A bone-cracking strike leaves them gasping!",
-                "🔥 Your attack ignites into a fiery explosion of damage!",
-                "💀 Death blow! The enemy collapses under your might!",
-                "⚔️ You unleash a flawless strike at their weakest point!",
-                "🔪 A razor-sharp slash deals double the carnage!",
-                "🌟 Perfect timing! You devastate your opponent!",
-                "💣 The ground shakes from the force of your crit!",
-                "💢 The enemy reels, crushed by your critical assault!",
-                "👊 Your strike echoes like thunder, shattering their resolve!"
-            ]
-
-            if attack == 1 or attack == 2:
-                if attack == 1:
-                    miss = random.randint(1, 200)
-                    if miss < 180 - enemysp:
-                        if stats["Weapon"]["DUR"] < 0:
-                            type("Your sword has no more durability! Your enemy charges at you while you are unarmed. STRIKE! You lost...")
-                            time.sleep(1)
-                            clear()
-                            break
-                        if "Fire Aspect" in stats["Weapon"]["Name"]:
-                            fires = random.randint(1, 100)
-                            if fires <= 50 + (stats["Weapon"]["Tier"] * 8):
-                                fire = True
-                                event = random.choice(fire_events)
-                                type(event)
-                                time.sleep(1)
-                                clear()
-                        crit = random.randint(1, 100)
-                        if crit <= stats["Crit"]:
-                            damage = yourstr * stats["Weapon"]["ATK"] * 2
-                            event = random.choice(crit_events) + f" You dealt {damage} damage!"
-                        else:
-                            damage = yourstr * stats["Weapon"]["ATK"]
-                            event = random.choice(events) + f" You dealt {damage} damage!"
-                        block = random.randint(1, 100)
-                        if block <= 20:
-                            print("blocked!")
-                            if enemy_players[p]['lvl'] < 100:
-                                block = shield["DEF"]
-                                if helmet is not None:
-                                    block += helmet["DEF"]
-                                if legging is not None:
-                                    block += legging["DEF"]
-                                if boot is not None:
-                                    block += boot["DEF"]
-                                if chestplate is not None:
-                                    block += chestplate["DEF"]
-                            else:
-                                if block <= 50:
-                                    damage = 0
-                        if damage - (enemydef * block) < 0:
-                            damage = 0
-                        else:
-                            damage -= enemydef * block
-                        enemyhp -= damage
-                        type(event)
-                        stats["Weapon"]["DUR"] -= 1
-                        time.sleep(1.9999999999)
-                        clear()
-                    else:
-                        event = random.choice(miss_events)
-                        type(event)
-                        time.sleep(1)
-                        clear()
-                shield_events = [
-                    "You slam your shield forward, rattling the enemy’s teeth!",
-                    "With a mighty shove, your shield smashes into their chest!",
-                    "You bash them aside, knocking the wind out of their lungs!",
-                    "The shield crashes into their jaw, sending them reeling!",
-                    "You charge forward, shield-first, and crush their guard!",
-                    "Your shield collides with brutal force, staggering your foe!",
-                    "You feint, then slam your shield into their ribs!",
-                    "With a deafening clang, your shield bashes through!",
-                    "You ram your shield edge-first, cutting into their flesh!",
-                    "You smash their weapon arm with a crushing shield strike!",
-                    "The shield connects, stunning your opponent in place!",
-                    "You slam your shield downward, pinning them to the ground!",
-                    "You drive your shield into their gut, making them double over!",
-                    "Your shield strike knocks the enemy sprawling to the dirt!",
-                    "With raw strength, you bowl them over using your shield!",
-                    "The edge of your shield slams across their temple!",
-                    "You bash them backward, their defenses crumbling!",
-                    "A sharp shield thrust knocks the enemy off balance!",
-                    "You spin and strike with the back of your shield!",
-                    "Your shield collides like a hammer, ringing in their ears!"
-                ]
-                if attack == 2:
-                    if stats["Left Hand"]["Class"] == "Shield":
-                        type(random.choice(shield_events))
-                        atk_mult = random.uniform(2, 3.5)
-                        fasttype(f"You deal {stats['STR'] * atk_mult}")
-                        enemyhp -= yourstr * atk_mult
-                        time.sleep(1)
-                        clear()
-                    elif stats["Left Hand"]["Class"] == "Rune":
-                        rune_events = [
-                            "You raise the rune in your left hand — it glows and releases a surge of power!",
-                            "The rune thrums violently, unleashing waves of energy around you!",
-                            "Arcane light bursts from the rune, blinding your opponent momentarily!",
-                            "You clutch the rune tight, and it flares with raw magical force!",
-                            "The rune in your palm hums, scattering sparks into the air!",
-                            "A beam of pure energy erupts from the rune, searing the battlefield!",
-                            "You press the rune forward, and runic chains lash out at your enemy!",
-                            "The rune glows crimson, amplifying your next attack with fiery strength!",
-                            "You lift the rune skyward, summoning a shockwave of arcane energy!",
-                            "Runes spiral in the air from your hand as the artifact activates!",
-                            "The rune pulses, forming a protective barrier around you!",
-                            "You channel your will through the rune — a burst of light pushes foes back!",
-                            "Mystic flames erupt from the rune, scorching everything nearby!",
-                            "You hold the rune high, and it summons a torrent of lightning!",
-                            "The rune vibrates in your grip, enhancing your reflexes!",
-                            "Your rune shines with divine radiance, weakening your enemy’s resolve!",
-                            "You slam the rune into the ground — cracks of glowing energy spread outward!",
-                            "The rune emits an eerie blue light, chilling the air to frost!",
-                            "Dark tendrils spill from the rune, siphoning energy from your foe!",
-                            "You grip the rune tightly — it bursts, unleashing unstoppable chaos!"
-                        ]
-                        dodge = True
-                        type({random.choice(rune_events)})
-                        time.sleep(1.5)
-                        clear()
-                    elif stats["Left Hand"]["Class"] == "Potion of Healing":
-                        healing_potion_events = [
-                            "You uncork the potion and drink deeply — your wounds begin to close!",
-                            "The glowing liquid restores your vitality as you swallow it down!",
-                            "You gulp the potion and feel warmth spreading through your body!",
-                            "The bitter taste fades quickly as your injuries knit back together!",
-                            "You drink the potion and strength surges back into your muscles!",
-                            "Golden light pulses through your veins as the potion heals you!",
-                            "You tilt the vial back and your heartbeat steadies instantly!",
-                            "The potion soothes your pain as it flows down your throat!",
-                            "You chug the potion and your vision sharpens once more!",
-                            "With a quick drink, your stamina returns in a rush!",
-                            "The potion’s glow fades as it restores your health!",
-                            "You take a long drink and your breathing becomes steady again!",
-                            "A surge of energy floods you as the potion’s magic takes hold!",
-                            "Your wounds begin to seal the moment the potion touches your lips!",
-                            "You drink the liquid fire, but it heals as it burns!",
-                            "The potion leaves a trail of warmth as your injuries fade!",
-                            "You down the potion and vitality floods your body!",
-                            "The vial empties and golden sparks mend your broken flesh!",
-                            "You drink swiftly, and a soothing calm washes over you!",
-                            "The healing potion restores your strength in moments!"
-                        ]
-                        type(random.choice(healing_potion_events))
-                        type(f"You healed for {stats['Left Hand']['Effect']} HP!")
-                        yourhp += stats["Left Hand"]["Effect"]
-                    elif stats["Left Hand"]["Class"] == "Potion of Strength":
-                        strength_potion_events = [
-                            "You uncork the potion and drink deeply — your muscles surge with newfound power!",
-                            "The fiery liquid courses through your veins, amplifying your strength!",
-                            "You gulp the potion and feel raw power radiating from your limbs!",
-                            "The bitter taste fades quickly as your muscles bulge with energy!",
-                            "You drink the potion and your strikes feel unstoppable!",
-                            "Red light pulses through your body as the potion enhances your might!",
-                            "You tilt the vial back and a wave of strength floods over you!",
-                            "The potion invigorates you as it flows down your throat!",
-                            "You chug the potion and your arms feel like steel!",
-                            "With a quick drink, your power multiplies in an instant!",
-                            "The potion’s glow intensifies as it fuels your strength!",
-                            "You take a long drink and your muscles tense with energy!",
-                            "A surge of raw power fills you as the potion’s magic takes hold!",
-                            "Your strikes become devastating the moment the potion touches your lips!",
-                            "You drink the liquid fire, and it ignites your fighting spirit!",
-                            "The potion leaves a trail of heat as your strength swells!",
-                            "You down the potion and feel invincible!",
-                            "The vial empties and red sparks ignite your muscles!",
-                            "You drink swiftly, and a fierce power surges through you!",
-                            "The strength potion transforms you into a powerhouse!"
-                        ]
-                        type(random.choice(strength_potion_events))
-                        type(f"You gained {stats['Left Hand']['Effect']} STR!")
-                        yourstr += stats["Left Hand"]["Effect"]
-                    elif stats["Left Hand"]["Class"] == "Potion of Defense":
-                        defense_potion_events = [
-                            "You uncork the potion and drink deeply — your skin hardens like armor!",
-                            "The shimmering liquid flows through you, bolstering your defenses!",
-                            "You gulp the potion and feel an impenetrable shield forming around you!",
-                            "The bitter taste fades quickly as your body toughens!",
-                            "You drink the potion and your resilience feels unbreakable!",
-                            "Blue light pulses through your veins as the potion fortifies you!",
-                            "You tilt the vial back and a wave of protection envelops you!",
-                            "The potion strengthens you as it flows down your throat!",
-                            "You chug the potion and your defenses feel rock-solid!",
-                            "With a quick drink, your durability increases dramatically!",
-                            "The potion’s glow intensifies as it reinforces your body!",
-                            "You take a long drink and your skin feels like steel!",
-                            "A surge of fortitude fills you as the potion’s magic takes hold!",
-                            "Your defenses become formidable the moment the potion touches your lips!",
-                            "You drink the liquid fire, and it hardens your resolve!",
-                            "The potion leaves a trail of cool energy as your defenses rise!",
-                            "You down the potion and feel invincible!",
-                            "The vial empties and blue sparks fortify your body!",
-                            "You drink swiftly, and a sturdy shield forms around you!",
-                            "The defense potion transforms you into a fortress!"
-                        ]
-                        type(random.choice(defense_potion_events))
-                        type(f"You gained {stats['Left Hand']['Effect']} DEF!")
-                        yourdef += stats["Left Hand"]["Effect"]
-                if enemyhp <= 0:
-                    death_events = [
-                        "With a final, desperate gasp, your opponent collapses to the ground, defeated.",
-                        "Your enemy falls to their knees, clutching their wounds as they succumb to defeat.",
-                        "With a last, shuddering breath, your foe crumples to the earth, vanquished.",
-                        "Your opponent staggers back, eyes wide with shock, before falling lifelessly.",
-                        "With a heavy thud, your enemy hits the ground, their fight finally over.",
-                        "Your foe's knees buckle, and they collapse, the fight drained from their body.",
-                        "With a final, pained cry, your opponent falls, the battle lost.",
-                        "Your enemy's eyes flutter shut as they drop to the ground, defeated.",
-                        "Their weapon slips from their hand as they collapse, strength leaving them for good.",
-                        "With one last stagger, your opponent collapses in the dirt, breath gone.",
-                        "A hollow gasp escapes as your foe crashes down, utterly beaten.",
-                        "Their body gives way, and they crumble into the dust of the battlefield.",
-                        "The enemy’s guard falters, and they drop with a dull, final thud.",
-                        "Eyes dimming, your opponent slumps forward and hits the ground motionless.",
-                        "With one final cry, they fall, echoing silence following soon after.",
-                        "The fight leaves their body, and they collapse in a heap of defeat.",
-                        "Their knees buckle and they collapse face-first, the battle over.",
-                        "Your foe lets out a final breath, then falls limp upon the ground.",
-                        "They sway for a moment, then fall like a toppled statue, lifeless.",
-                        "With trembling arms failing, they sink to the floor, conquered at last.",
-                        "Your opponent’s weapon clatters to the ground as they fall, the end upon them."
-                    ]
-                    type(random.choice(death_events))
-                    time.sleep(1)
-                    clear()
-                    win = True
-                    dead = True
-            elif attack == 3:
-                for item in stats["Backpack"]:
-                    if item["Class"] == "Potion of Healing" or item["Class"] == "Potion of Strength" or item["Class"] == "Potion of Defense":
-                        print(f"Name: {item.get('Name')}")
-                        print(f"Effect: {item.get('Effect')}")
-                        print(f"Tier: {item.get('Tier')}\n")
-                    potion = input("Which potion would you like to use(Capitalization Counts): ")
-                    clear()
-                    found = False
-                    for i, item in enumerate(stats["Backpack"]):
-                        if item["Name"] == potion:
-                            found = True
-                            if item["Class"] == "Potion of Healing":
-                                healing_potion_events = [
-                                    "You uncork the potion and drink deeply — your wounds begin to close!",
-                                    "The glowing liquid restores your vitality as you swallow it down!",
-                                    "You gulp the potion and feel warmth spreading through your body!",
-                                    "The bitter taste fades quickly as your injuries knit back together!",
-                                    "You drink the potion and strength surges back into your muscles!",
-                                    "Golden light pulses through your veins as the potion heals you!",
-                                    "You tilt the vial back and your heartbeat steadies instantly!",
-                                    "The potion soothes your pain as it flows down your throat!",
-                                    "You chug the potion and your vision sharpens once more!",
-                                    "With a quick drink, your stamina returns in a rush!",
-                                    "The potion’s glow fades as it restores your health!",
-                                    "You take a long drink and your breathing becomes steady again!",
-                                    "A surge of energy floods you as the potion’s magic takes hold!",
-                                    "Your wounds begin to seal the moment the potion touches your lips!",
-                                    "You drink the liquid fire, but it heals as it burns!",
-                                    "The potion leaves a trail of warmth as your injuries fade!",
-                                    "You down the potion and vitality floods your body!",
-                                    "The vial empties and golden sparks mend your broken flesh!",
-                                    "You drink swiftly, and a soothing calm washes over you!",
-                                    "The healing potion restores your strength in moments!"
-                                ]
-                                type(random.choice(healing_potion_events))
-                                type(f"You healed for {item['Effect']} HP!")
-                                yourhp += item["Effect"]
-                            elif item["Class"] == "Potion of Strength":
-                                strength_potion_events = [
-                                    "You uncork the potion and drink deeply — your muscles surge with newfound power!",
-                                    "The fiery liquid courses through your veins, amplifying your strength!",
-                                    "You gulp the potion and feel raw power radiating from your limbs!",
-                                    "The bitter taste fades quickly as your muscles bulge with energy!",
-                                    "You drink the potion and your strikes feel unstoppable!",
-                                    "Red light pulses through your body as the potion enhances your might!",
-                                    "You tilt the vial back and a wave of strength floods over you!",
-                                    "The potion invigorates you as it flows down your throat!",
-                                    "You chug the potion and your arms feel like steel!",
-                                    "With a quick drink, your power multiplies in an instant!",
-                                    "The potion’s glow intensifies as it fuels your strength!",
-                                    "You take a long drink and your muscles tense with energy!",
-                                    "A surge of raw power fills you as the potion’s magic takes hold!",
-                                    "Your strikes become devastating the moment the potion touches your lips!",
-                                    "You drink the liquid fire, and it ignites your fighting spirit!",
-                                    "The potion leaves a trail of heat as your strength swells!",
-                                    "You down the potion and feel invincible!",
-                                    "The vial empties and red sparks ignite your muscles!",
-                                    "You drink swiftly, and a fierce power surges through you!",
-                                    "The strength potion transforms you into a powerhouse!"
-                                ]
-                                type(random.choice(strength_potion_events))
-                                type(f"You gained {item['Effect']} STR!")
-                                yourstr += item["Effect"]
-                            elif item["Class"] == "Potion of Defense":
-                                defense_potion_events = [
-                                    "You uncork the potion and drink deeply — your skin hardens like armor!",
-                                    "The shimmering liquid flows through you, bolstering your defenses!",
-                                    "You gulp the potion and feel an impenetrable shield forming around you!",
-                                    "The bitter taste fades quickly as your body toughens!",
-                                    "You drink the potion and your resilience feels unbreakable!",
-                                    "Blue light pulses through your veins as the potion fortifies you!",
-                                    "You tilt the vial back and a wave of protection envelops you!",
-                                    "The potion strengthens you as it flows down your throat!",
-                                    "You chug the potion and your defenses feel rock-solid!",
-                                    "With a quick drink, your durability increases dramatically!",
-                                    "The potion’s glow intensifies as it reinforces your body!",
-                                    "You take a long drink and your skin feels like steel!",
-                                    "A surge of fortitude fills you as the potion’s magic takes hold!",
-                                    "Your defenses become formidable the moment the potion touches your lips!",
-                                    "You drink the liquid fire, and it hardens your resolve!",
-                                    "The potion leaves a trail of cool energy as your defenses rise!",
-                                    "You down the potion and feel invincible!",
-                                    "The vial empties and blue sparks fortify your body!",
-                                    "You drink swiftly, and a sturdy shield forms around you!",
-                                    "The defense potion transforms you into a fortress!"
-                                ]
-                                type(random.choice(defense_potion_events))
-                                type(f"You gained {item['Effect']} DEF!")
-                                yourdef += item["Effect"]
-                            del stats["Backpack"][i]
-                            time.sleep(1.5)
-                            clear()
-                    if not found:
-                        type("You don't have that potion!")
-                        time.sleep(1)
-                        clear()
-            elif attack == 4:
-                type(f"Enemy Level: {enemy_players[p]['lvl']}")
-                type(f"Enemy HP: {enemyhp}")
-                type(f"Enemy STR: {enemystr}")
-                type(f"Enemy DEF: {enemydef}")
-                type(f"Enemy CRIT: {enemycrit}%")
-                type(f"Enemy SP: {enemysp}")
-                type(f"Enemy Weapon: {weapon['Name']} | ATK: {weapon['ATK']} | DUR: {weapon['DUR']}/{weapon['MAX DUR']}")
-                if chestplate is not None:
-                    type(f"Enemy Chestplate: {chestplate['Name']} | DEF: {chestplate['DEF']} | SP: {chestplate['SP']} | DUR: {chestplate['DUR']}/{chestplate['MAX DUR']}")
-                else:
-                    type("Enemy Chestplate: None")
-                if helmet is not None:
-                    type(f"Enemy Helmet: {helmet['Name']} | DEF: {helmet['DEF']} | SP: {helmet['SP']} | DUR: {helmet['DUR']}/{helmet['MAX DUR']}")
-                else:
-                    type("Enemy Helmet: None")
-                if legging is not None:
-                    type(f"Enemy Leggings: {legging['Name']} | DEF: {legging['DEF']} | SP: {legging['SP']} | DUR: {legging['DUR']}/{legging['MAX DUR']}")
-                else:
-                    type("Enemy Leggings: None")
-                if boot is not None:
-                    type(f"Enemy Boots: {boot['Name']} | DEF: {boot['DEF']} | SP: {boot['SP']} | DUR: {boot['DUR']}/{boot['MAX DUR']}")
-                else:
-                    type("Enemy Boots: None")
-                type(f"Enemy Shield: {shield['Name']} | DEF: {shield['DEF']} | SP: {shield['SP']} | DUR: {shield['DUR']}/{shield['MAX DUR']}")
-                hi = input("Press Enter to continue: ")
-                if hi is not None:
-                    time.sleep(0)
-                clear()
-            time.sleep(1)
-            clear()
-            type("Enemy's Turn!")
-            time.sleep(0.4)
-            clear()
-            for i in range(random.randint(1, 3)):
-                time.sleep(0.3)
-                clear()
-                print("Choosing action .")
-                time.sleep(0.3)
-                clear()
-                print("Choosing action ..")
-                time.sleep(0.3)
-                clear()
-                print("Choosing action ...")
-            time.sleep(0.3)
-            clear()
-            enemy_attack = random.randint(1, 2)
-            if enemy_attack == 1:
-                if dodge:
-                    chance = random.randint(1, 100)
-                    if chance <= 70:
-                        dodge_events = [
-                            "You nimbly dodge the enemy's attack, evading harm!",
-                            "With swift reflexes, you sidestep the incoming strike!",
-                            "You duck under the enemy's blow, avoiding damage!",
-                            "You leap aside just in time, the attack missing you completely!",
-                            "You roll away from the enemy's swing, escaping unscathed!",
-                            "You twist your body, letting the attack sail past you!",
-                            "You step back quickly, the enemy's weapon cutting through empty air!",
-                            "You parry the attack with a quick movement, avoiding injury!",
-                            "You leap to the side, the enemy's strike hitting nothing but air!",
-                            "You spin away from the blow, narrowly avoiding harm!",
-                            "You slide to the side, the enemy's attack missing you entirely!",
-                            "You vault over the enemy's strike, landing safely out of harm's way!",
-                            "You duck and weave, the attack failing to connect!",
-                            "You sidestep the enemy's blow with practiced ease!",
-                            "You leap back just in time, the attack grazing past you!",
-                            "You twist away from the strike, avoiding any damage!",
-                            "You roll under the enemy's swing, escaping harm!",
-                            "You step aside, the attack cutting through empty space!",
-                            "You parry the blow with a quick motion, avoiding injury!",
-                            "You leap to the side, the enemy's strike missing you completely!"
-                        ]
-                        type(random.choice(dodge_events))   
-                        time.sleep(1)
-                        clear()
-                if stats["Left Hand"]["Class"] == "Shield":
-                    if "Divine Guard" in stats["Left Hand"]["Name"]:
-                        block = random.randint(1, 100)
-                        if block <= 30 + (stats["Left Hand"]["Tier"] * 10):
-                            divine_shield_events = [
-                                "The enemy's attack bounces off your divine shield, leaving you unharmed!",
-                                "With a radiant glow, your divine shield repels the enemy's strike!",
-                                "The foe's weapon shatters against your divine shield, protecting you completely!",
-                                "Your divine shield emits a blinding light, causing the enemy's attack to miss!",
-                                "The enemy's blow is absorbed by your divine shield, leaving you unscathed!",
-                                "Your divine shield glows with holy power, deflecting the enemy's strike!",
-                                "The foe's weapon is rendered useless against your divine shield!",
-                                "Your divine shield radiates energy, nullifying the enemy's attack!",
-                                "The enemy's blow is stopped cold by the strength of your divine shield!",
-                                "Your divine shield shines brightly, causing the enemy's strike to falter!"
-                            ]
-                            type(random.choice(divine_shield_events))
-                            time.sleep(1)
-                            clear()
-                    else:
-                        block_chance = random.randint(1, 100)
-                        if block_chance <= 20:
-                            shield_events = [
-                                "The enemy slams their weapon against your shield, rattling your bones!",
-                                "With a mighty strike, the foe's weapon crashes into your shield!",
-                                "The enemy's blow pounds against your shield, sending shockwaves through you!",
-                                "Your shield takes the brunt of the enemy's powerful strike!",
-                                "The foe's weapon clangs loudly as it hits your shield!",
-                                "You brace yourself as the enemy's attack smashes into your shield!",
-                                "The enemy's blow reverberates through your shield, testing your endurance!",
-                                "Your shield absorbs the force of the enemy's heavy strike!",
-                                "The foe's weapon slams against your shield with a deafening crash!",
-                                "You grit your teeth as the enemy's attack pounds on your shield!"
-                            ]
-                            type(random.choice(shield_events))
-                            block = stats["Left Hand"]["DEF"]
-                        if stats["Helmet"] != {}:
-                            block += stats["Helmet"]["DEF"]
-                            stats["Helmet"]["DUR"] -= 1
-                            if stats["Helmet"]["DUR"] < 0:
-                                type("Your helmet has broken! You are now unprotected.")
-                                time.sleep(1)
-                                clear()
-                                stats["Helmet"] = {}
-                        if stats["Chestplate"] != {}:
-                            block += stats["Chestplate"]["DEF"]
-                            stats["Chestplate"]["DUR"] -= 1
-                            if stats["Chestplate"]["DUR"] < 0:
-                                type("Your chestplate has broken! You are now unprotected.")
-                                time.sleep(1)
-                                clear()
-                                stats["Chestplate"] = {}
-                        if stats["Leggings"] != {}:
-                            block += stats["Leggings"]["DEF"]
-                            stats["Leggings"]["DUR"] -= 1
-                            if stats["Leggings"]["DUR"] < 0:
-                                type("Your leggings have broken! You are now unprotected.")
-                                time.sleep(1)
-                                clear()
-                                stats["Leggings"] = {}
-                        if stats["Boots"] != {}:
-                            block += stats["Boots"]["DEF"]
-                            stats["Boots"]["DUR"] -= 1
-                            if stats["Boots"]["DUR"] < 0:
-                                type("Your boots have broken! You are now unprotected.")
-                                time.sleep(1)
-                                clear()
-                                stats["Boots"] = {}
-                        if damage - (yourdef * block) < 0:
-                            damage = 0
-                        else:
-                            damage = (enemystr * weapon["ATK"]) - yourdef * block
-                    stats["Left Hand"]["DUR"] -= 1
-                    time.sleep(1)
-                    clear()
-                    if stats["Left Hand"]["DUR"] < 0:
-                        type("Your shield has broken! You are now unprotected.")
-                        time.sleep(1)
-                        clear()
-                        stats["Left Hand"] = {}
-                    yourhp -= damage
-                    type(f"The enemy dealt {damage} damage!")
-                    time.sleep(1)
-                    clear()
-                    if yourhp <= 0:
-                        death_events = [
-                            "With a final, desperate gasp, you collapse to the ground, defeated.",
-                            "You fall to your knees, clutching your wounds as you succumb to defeat.",
-                            "With a last, shuddering breath, you crumple to the earth, vanquished.",
-                            "You stagger back, eyes wide with shock, before falling lifelessly.",
-                            "With a heavy thud, you hit the ground, your fight finally over.",
-                            "Your knees buckle, and you collapse, the fight drained from your body.",
-                            "With a final, pained cry, you fall, the battle lost.",
-                            "Your eyes flutter shut as you drop to the ground, defeated.",
-                            "Your weapon slips from your hand as you collapse, strength leaving you for good.",
-                            "With one last stagger, you collapse in the dirt, breath gone.",
-                            "A hollow gasp escapes as you crash down, utterly beaten.",
-                            "Your body gives way, and you crumble into the dust of the battlefield.",
-                            "Your guard falters, and you drop with a dull, final thud.",
-                            "Eyes dimming, you slump forward and hit the ground motionless.",
-                            "With one final cry, you fall, echoing silence following soon after.",
-                            "The fight leaves your body, and you collapse in a heap of defeat.",
-                            "Your knees buckle and you collapse face-first, the battle over.",
-                            "You let out a final breath, then fall limp upon the ground.",
-                            "You sway for a moment, then fall like a toppled statue, lifeless.",
-                            "With trembling arms failing, you sink to the floor, conquered at last."
-                        ]
-                        type(random.choice(death_events))
-                        time.sleep(1)
-                        clear()
-                        break              
     else:
         print("Invalid game mode!")
         time.sleep(1)
         clear()
+
 
 def npc_fishing(player):
     global tournament_active
@@ -4263,11 +3762,7 @@ while option != 14:
     if option == 1:
         arena()
     if option == 2:
-        #stats["Backpack"].pop(0)
-        #stats["Backpack"][0]["DUR"] = 1
-        stats["Lvl"] = 10000000000000
-        stats["Celestium Prism"] = 10000000000000
-        stats["Gold"] = 10000000000000
+        adventure()
     if option == 3:
         fishing()
     if option == 4:
@@ -4289,7 +3784,26 @@ while option != 14:
     if option == 12:
         tips()
     if option == 13:
-        print("CURRENTLY UNAVAILABLE DUE TO TECHNICAL DIFFICULTIES. SORRY FOR THE INCONVENIENCE!!")
+        _unused_chat_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "UNUSED.py")
+        if not os.path.isfile(_unused_chat_path):
+            print("AI Chat skipped: UNUSED.py is missing beside the game.")
+            hi = input("Press Enter to return: ")
+            if hi is not None:
+                time.sleep(0)
+        else:
+            try:
+                spec = importlib.util.spec_from_file_location("rpg_unused_chat", _unused_chat_path)
+                if spec is None or spec.loader is None:
+                    raise RuntimeError("Could not load UNUSED.py")
+                unused_mod = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(unused_mod)
+                unused_mod.chatbot(stats)
+            except Exception as err:
+                print(f"AI Chat unavailable ({err}). Ensure gpt4all and model path inside UNUSED.py are valid.")
+                hi = input("Press Enter to return: ")
+                if hi is not None:
+                    time.sleep(0)
+        clear()
     if option == 14:
         type(" BYEEEE")
         for i in range(10000000000000000000000000000000000000000000000):
