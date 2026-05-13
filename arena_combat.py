@@ -5,6 +5,7 @@ import copy
 import random
 import time
 from typing import Any, Callable, Dict, Tuple
+from ui import console
 
 
 def run_arena_style_combat(
@@ -55,7 +56,7 @@ def run_arena_style_combat(
         if fire and effect != 0:
             effect -= 1
             wpn_tier = stats["Weapon"].get("Tier", 0)
-            print("Enemy is burning! They take", 250 + (wpn_tier * 50), "damage!")
+            console.print("Enemy is burning! They take", 250 + (wpn_tier * 50), "damage!")
             enemyhp -= 250 + (wpn_tier * 50)
             if enemyhp <= 0:
                 tw("You defeated your opponent!")
@@ -63,20 +64,20 @@ def run_arena_style_combat(
                 clr()
                 win = True
                 break
-        print(f"Your HP: {yourhp}")
-        print("========================\n")
+        console.print(f"Your HP: {yourhp}")
+        console.print("========================\n")
         time.sleep(0.1)
-        print("1. Attack\n")
+        console.print("1. Attack\n")
         time.sleep(0.1)
-        print("2. Use Left Hand\n")
+        console.print("2. Use Left Hand\n")
         time.sleep(0.1)
-        print("3. Use Potion\n")
+        console.print("3. Use Potion\n")
         time.sleep(0.1)
-        print("4. View Enemy Stats\n")
+        console.print("4. View Enemy Stats\n")
         time.sleep(0.1)
-        print("=======================\n")
+        console.print("=======================\n")
         time.sleep(0.1)
-        attack = int(input("Enter a number: "))
+        attack = int(console.input("Enter a number: "))
         clr()
         events = [
             "You swing your sword and strike the opponent!",
@@ -197,7 +198,7 @@ def run_arena_style_combat(
                         event = random.choice(events) + f" You dealt {damage} damage!"
                     block = random.randint(1, 100)
                     if block <= 20:
-                        print("blocked!")
+                        console.print("blocked!")
                         if foe_lvl < 100:
                             block = shield["DEF"]
                             if helmet is not None:
@@ -392,10 +393,10 @@ def run_arena_style_combat(
         elif attack == 3:
             for item in stats["Backpack"]:
                 if item["Class"] == "Potion of Healing" or item["Class"] == "Potion of Strength" or item["Class"] == "Potion of Defense":
-                    print(f"Name: {item.get('Name')}")
-                    print(f"Effect: {item.get('Effect')}")
-                    print(f"Tier: {item.get('Tier')}\n")
-                potion = input("Which potion would you like to use(Capitalization Counts): ")
+                    console.print(f"Name: {item.get('Name')}")
+                    console.print(f"Effect: {item.get('Effect')}")
+                    console.print(f"Tier: {item.get('Tier')}\n")
+                potion = console.input("Which potion would you like to use(Capitalization Counts): ")
                 clr()
                 found = False
                 for i, item in enumerate(stats["Backpack"]):
@@ -511,7 +512,7 @@ def run_arena_style_combat(
             else:
                 tw("Enemy Boots: None")
             tw(f"Enemy Shield: {shield['Name']} | DEF: {shield['DEF']} | SP: {shield['SP']} | DUR: {shield['DUR']}/{shield['MAX DUR']}")
-            hi = input("Press Enter to continue: ")
+            hi = console.input("Press Enter to continue: ")
             if hi is not None:
                 time.sleep(0)
             clr()
@@ -523,13 +524,13 @@ def run_arena_style_combat(
         for _i in range(random.randint(1, 3)):
             time.sleep(0.3)
             clr()
-            print("Choosing action .")
+            console.print("Choosing action .")
             time.sleep(0.3)
             clr()
-            print("Choosing action ..")
+            console.print("Choosing action ..")
             time.sleep(0.3)
             clr()
-            print("Choosing action ...")
+            console.print("Choosing action ...")
         time.sleep(0.3)
         clr()
         enemy_attack = random.randint(1, 2)

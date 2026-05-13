@@ -1,0 +1,840 @@
+# ============================================================
+#  MASSIVE CODEX EXPANSION
+# ============================================================
+CODEX_MASSIVE = {
+    "cities": {
+        "title": "Cities of Aetheris",
+        "entries": [
+            ("Valdris", "The Golden City, capital of Aetheris. Built on seven hills, it is a metropolis of gleaming white stone towers, bustling markets, and ancient libraries. The Iron Legion keeps peace here."),
+            ("Goldspire", "A city built around a massive golden spire that pierces the clouds. It is the commercial heart of the realm, where merchants from every corner of the world come to trade."),
+            ("Sapphire Harbor", "A coastal city famous for its natural deep-water harbor and the annual fishing tournament. The city is built on wooden piers that stretch far into the bay."),
+            ("Stonehold", "The last remaining dwarven city. Hidden deep within the mountains, its halls are carved from living rock and lit by eternal crystal fires."),
+            ("Silverbark", "An elven city hidden in the heart of the Whispering Woods. Its buildings are grown from living trees and blend seamlessly with the forest."),
+            ("Duskport", "A lawless port city where the Shadow Guild holds sway. Anything can be bought or sold here, and the city guard is paid to look the other way."),
+            ("Ironhaven", "The fortress city of the Iron Legion. Surrounded by walls fifty feet thick, it has never fallen to any siege. It serves as the military capital of the realm."),
+            ("Skyreach", "A city built on the Floating Isles, accessible only by magic or flying mount. Its buildings are made of cloudstone and its streets are bridges of light."),
+            ("Crystal Peak Monastery", "A monastery built atop the highest peak in the Crystal Mountains. Monks here study the stars and seek enlightenment through isolation."),
+            ("Ember Town", "A small settlement built near the volcanic vents. The geothermal heat provides warm baths and the volcanic soil is incredibly fertile."),
+        ],
+    },
+    "heroes_2": {
+        "title": "Heroes of Legend",
+        "entries": [
+            ("Aldric the Dawnbringer", "The greatest paladin in history. He wielded Daybreak, the sword of light, and held the Crimson Fields against ten thousand goblins. He vanished after his greatest victory."),
+            ("Seraphina the Mage-Queen", "A sorceress of unparalleled power who ruled Valdris for two centuries. She mastered time magic and is said to have foreseen her own death."),
+            ("Bjorn Ironhammer", "The last king of Khaz-Modrim. When the corruption reached his throne, he sealed the lower depths, sacrificing himself to trap the darkness below."),
+            ("Lianna Shadowdancer", "The legendary founder of the Shadow Guild. She could walk through walls and disappear at will. She vanished with the Shadow Crown."),
+            ("Theron Stormcaller", "A sky mage who tamed the winds and built the Floating Isles as a sanctuary for outcast mages. He was last seen riding lightning into a hurricane."),
+            ("Elena Silverstream", "The champion fisher who caught a Sea Serpent with a bamboo rod. She now serves as the Dockmaster of Sapphire Harbor."),
+            ("Gideon Stoneheart", "A dwarf who single-handedly held the Eastern Gate against a goblin horde for three days. His statue stands in the center of Stonehold."),
+            ("Aria Moonshadow", "An elven ranger who tracked and killed the Shadow Stalker that terrorized Silverbark for a century. She now leads the rangers of the Whispering Woods."),
+            ("Kaelen Firebrand", "A pyromancer who saved the city of Valdris from an ice dragon by creating a wall of fire that burned for seven days. He became the first Fire Archmage."),
+            ("Vesper Nightingale", "A bard whose songs could heal the wounded and inspire armies. She negotiated peace between the Iron Legion and the Goblin King."),
+        ],
+    },
+    "monsters_deep": {
+        "title": "Monsters of the Deep",
+        "entries": [
+            ("The Kraken", "A colossal squid that dwells in the deepest trenches of the Sapphire Sea. Its tentacles can pull entire ships beneath the waves. Only three people have seen it and lived."),
+            ("The Leviathan", "An ancient sea serpent that predates the dragons. It sleeps beneath the ocean floor and its dreams cause tidal waves. It is said to be the size of a mountain range."),
+            ("The Abyssal Horror", "A creature from the deepest ocean trenches, where no light penetrates. It has never been seen clearly — only its glowing eyes and massive shadow have been observed."),
+            ("The Sea Witch", "A mysterious figure who lives in a coral castle beneath the waves. She controls sea creatures and is said to grant boons to sailors who make offerings."),
+            ("The Drowned Legion", "The ghosts of a sunken army that still marches across the ocean floor. They are searching for their lost general, who went down with their flagship."),
+            ("The Coral Dragon", "A dragon that adapted to living underwater. Its scales are made of living coral and its breath weapon is a stream of superheated water."),
+            ("The Siren", "Beautiful but deadly creatures whose songs lure sailors to their doom. They are not malevolent — they simply do not understand why humans cannot breathe water."),
+            ("The Tidal Guardian", "A massive construct of water and magic that protects the Sapphire Docks from tsunamis. It was created by an ancient civilization and still follows its programming."),
+        ],
+    },
+    "planes": {
+        "title": "Planes of Existence",
+        "entries": [
+            ("The Material Plane", "The world of Aetheris, where mortals live and die. It is the middle plane, balanced between order and chaos, light and dark."),
+            ("The Ethereal Plane", "A misty realm that overlaps the Material Plane. Ghosts and spirits dwell here, and skilled mages can step into this plane to become invisible."),
+            ("The Astral Plane", "A plane of pure thought and consciousness. Psionic powers originate here, and powerful minds can project themselves into this realm."),
+            ("The Elemental Planes", "Four planes corresponding to the classical elements: Fire, Water, Earth, and Air. Elementals are native to these planes and are sometimes summoned by mages."),
+            ("The Shadowfell", "A dark reflection of the Material Plane where shadows are alive and corruption thrives. The Rotfang Depths have a connection to this plane."),
+            ("The Feywild", "A realm of magic and wonder where the fey creatures dwell. Time flows differently here — a day in the Feywild can be a year in the Material Plane."),
+            ("The Abyss", "A plane of pure chaos and evil. Demons originate here and constantly seek ways to break into the Material Plane. The Abyss has infinite layers."),
+            ("The Celestial Plane", "A realm of pure light and goodness where angels and gods reside. It is said that mortals of pure heart can ascend to this plane after death."),
+            ("The Void", "The space between planes, where nothing exists. Void creatures originate here. Traveling through the Void is extremely dangerous and requires powerful magic."),
+            ("The Clockwork Plane", "A plane of perfect order and mechanism. Modrons and other clockwork creatures reside here. Time in this plane is absolutely precise."),
+        ],
+    },
+    "artifacts_2": {
+        "title": "Lost Artifacts",
+        "entries": [
+            ("The Crown of Stars", "A crown made from a piece of a dying star. It grants its wearer control over celestial bodies and the power to call down starlight as a weapon."),
+            ("The Staff of Seasons", "A staff that controls the weather. Its wielder can summon blizzards, droughts, storms, or gentle breezes at will. It was shattered during the Mage War."),
+            ("The Armor of the Forgotten", "Armor that belonged to a hero erased from history. It grants the wearer anonymity — no one can remember their face or name while wearing it."),
+            ("The Chalice of Life", "A golden chalice that can resurrect the dead. However, each resurrection costs a year of the user's life. It is hidden in the Sunken Cathedral."),
+            ("The Mask of Many Faces", "A mask that allows the wearer to assume any appearance. It was created by a trickster god and has a mischievous will of its own."),
+            ("The Hourglass of Eternity", "An hourglass that can stop time for everyone except its user. Each use drains a portion of the user's life force. It is kept in a vault beneath Valdris."),
+            ("The Book of All Spells", "A book containing every spell ever created. It has infinite pages and adds new spells as they are invented. It is kept in the Grand Arcane Library."),
+            ("The Compass of Destiny", "A compass that always points toward the user's greatest desire. It has led adventurers to treasure, love, power, and sometimes to their doom."),
+            ("The Key of Infinite Doors", "A key that can open any door — physical, magical, or conceptual. It is said that the key can even open doors that don't exist yet."),
+            ("The Lantern of Truth", "A lantern that reveals the true nature of anything it illuminates. It exposes lies, reveals hidden things, and shows the world as it really is."),
+        ],
+    },
+    "wars": {
+        "title": "Great Wars",
+        "entries": [
+            ("The Goblin War", "A thirty-year conflict between the united races and the goblin hordes. It ended when Sir Aldric slew the Goblin King. The Crimson Fields are named for the blood shed there."),
+            ("The Mage Rebellion", "A civil war among the Arcane Circle that split magic users into light and dark factions. The war devastated Valdris and led to the banning of necromancy."),
+            ("The Dragon War", "A war between the Great Dragons and the mortal races. The mortals won by imprisoning the Dragon Lords in crystal prisons, but the dragons have never forgotten."),
+            ("The War of Echoes", "A war fought across time itself. Chronomancers from different eras clashed, rewriting history and creating paradoxes that still cause problems today."),
+            ("The Silence War", "A war against a race of creatures that fed on sound and magic. They were defeated when the bards of the realm composed a song so beautiful it destroyed them."),
+            ("The Titanomachy", "The war against the Titans, ancient beings of pure elemental force. The Titans were defeated when the gods themselves intervened and imprisoned them beneath mountains."),
+            ("The Shadow War", "An ongoing shadow conflict between the Shadow Guild and the forces of order. It is fought in alleys and dark corners, and most people don't even know it's happening."),
+        ],
+    },
+}
+
+CODEX.update(CODEX_MASSIVE)
+
+# ============================================================
+#  MASSIVE BESTIARY EXPANSION
+# ============================================================
+BESTIARY_MASSIVE = {
+    "Magma Titan": {
+        "lore": "A colossal being of molten rock born from the earth's fury. Its footsteps cause earthquakes and its body radiates enough heat to melt steel from a distance.",
+        "habitat": "Volcanic Cores, Magma Chambers",
+        "danger": "Legendary",
+        "tips": "Ice magic is critical. Stay mobile and avoid its lava attacks. Its molten body makes melee combat extremely dangerous.",
+    },
+    "Storm Giant": {
+        "lore": "Ancient giants who command the very skies. They live in cloud fortresses above the highest peaks and hurl lightning bolts like javelins.",
+        "habitat": "Mountain Tops, Cloud Cities, High Peaks",
+        "danger": "Legendary",
+        "tips": "They are immune to lightning. Physical attacks aimed at the legs can bring them down. Their war hammers can level buildings.",
+    },
+    "Forest Treant": {
+        "lore": "Ancient tree spirits awakened by the destruction of their forests. They are patient guardians who can command the plants around them to attack.",
+        "habitat": "Ancient Forests, Sacred Groves, Deep Woods",
+        "danger": "Very High",
+        "tips": "Fire is their greatest weakness. Avoid harming the smaller trees and plants around them or you will face their full wrath.",
+    },
+    "Nightmare Stalker": {
+        "lore": "A creature born from the collective fears of mortal beings. It hunts by sensing fear and can manifest from any shadow, no matter how small.",
+        "habitat": "Haunted Regions, Dreamscapes, Dark Places",
+        "danger": "Very High",
+        "tips": "Courage is your best defense. Light-based attacks reveal its true form. It cannot exist in areas of pure, bright light.",
+    },
+    "Sea Serpent": {
+        "lore": "A massive serpent that dwells in the deepest parts of the ocean. It surfaces only during storms or the Sapphire Docks tournament, drawn by large gatherings.",
+        "habitat": "Deep Ocean, Sapphire Depths",
+        "danger": "Legendary",
+        "tips": "Nearly impossible to fight in water. Use harpoons to slow it down and try to lure it into shallower waters where it can be cornered.",
+    },
+    "Frost Drake": {
+        "lore": "A lesser dragon of the frozen peaks. Its scales are plates of magical ice and its breath can flash-freeze a fully armored knight in seconds.",
+        "habitat": "Frozen Peaks, Glaciers, Ice Caverns",
+        "danger": "Legendary",
+        "tips": "Fire magic deals double damage. Its frost scales provide natural armor. Aim for the soft underbelly where the scales are thinner.",
+    },
+    "Mana Leech": {
+        "lore": "Parasitic entities that are magically attracted to sources of concentrated magical energy. Mages are their preferred prey, but enchanted items also draw them.",
+        "habitat": "Arcane Ruins, Magic Hotspots, Libraries",
+        "danger": "Medium",
+        "tips": "They are completely immune to magic. Use physical weapons only. Avoid using any magical abilities while they are nearby.",
+    },
+    "Ethereal Jinn": {
+        "lore": "Ancient spirits of air and flame that predate the mortal races. They are mischievous and unpredictable, granting wishes with ironic twists and testing mortals for amusement.",
+        "habitat": "Desert Ruins, Summoning Circles, The Sky",
+        "danger": "Very High",
+        "tips": "Immune to physical damage — only magic can harm them. Be extremely cautious about making deals or accepting gifts from a Jinn.",
+    },
+    "Void Beast": {
+        "lore": "Creatures from the spaces between realities, drawn to the material world by tears in the fabric of existence. Their form is constantly shifting and impossible to properly perceive.",
+        "habitat": "Void Rifts, Dimensional Tears, Deepest Depths",
+        "danger": "Legendary",
+        "tips": "Elemental magic disrupts their form. Their attacks ignore physical defense. You must dodge or use magical barriers to survive.",
+    },
+    "Lich Necromancer": {
+        "lore": "A mortal mage who achieved immortality by transforming their soul into a phylactery. As long as the phylactery exists, the Lich cannot be permanently destroyed.",
+        "habitat": "Ancient Tombs, Forsaken Towers, Necropolises",
+        "danger": "Legendary",
+        "tips": "Find and destroy the phylactery before the fight. Holy magic and fire are super effective. Without the phylactery, the Lich will keep resurrecting endlessly.",
+    },
+    "Dragon Whelp": {
+        "lore": "A young dragon still learning to master its innate power. Even at this age, it is a fearsome opponent with scales harder than steel and a breath weapon that can melt rock.",
+        "habitat": "Mountain Nests, Dragon Roosts, Crystal Peaks",
+        "danger": "Legendary",
+        "tips": "Dragon fire is devastating. Bring fire resistance potions. Aim for the eyes and wing joints to disable it. Do not let it take flight.",
+    },
+    "Corrupted Dwarf": {
+        "lore": "Once noble dwarves of Khaz-Modrim, now twisted by the deep corruption into mindless husks. They attack in relentless hordes, their war cries echoing through ancient halls.",
+        "habitat": "Rotfang Depths, Dwarven Ruins, Khaz-Modrim",
+        "danger": "High",
+        "tips": "Fire purifies the corruption and temporarily stuns them. Area damage is highly effective since they attack in groups. Watch for their coordinated charges.",
+    },
+    "Crystal Golem": {
+        "lore": "Living constructs of pure crystal, created by a mad geomancer who sought perfection. Their bodies refract magic and can focus light into searing beams.",
+        "habitat": "Crystal Mines, Ancient Labyrinths, Crystal Peaks",
+        "danger": "Extreme",
+        "tips": "They reflect magic — use physical attacks. Aim for the glowing core in their chest. Destroying their limbs reduces their attack options.",
+    },
+    "Shadow Assassin": {
+        "lore": "Elite killers of the Shadow Guild, trained in arts of stealth and murder since childhood. They can teleport between shadows and strike from impossible angles.",
+        "habitat": "Shadow Guild Halls, Urban Shadows, Any Dark Place",
+        "danger": "Extreme",
+        "tips": "Light-based attacks and area effects reveal their position. Never turn your back. They are glass cannons — high damage but low durability.",
+    },
+    "Stone Golem": {
+        "lore": "Ancient constructs created by dwarven geomancers to guard their treasures. They have stood motionless for centuries, waiting for intruders to trigger their programming.",
+        "habitat": "Dwarven Ruins, Ancient Temples, Buried Vaults",
+        "danger": "Extreme",
+        "tips": "Extremely high defense. Use armor-piercing attacks or magic. Avoid their charged punches which can kill in one hit. Slow but relentless.",
+    },
+    "Vampire Lord": {
+        "lore": "Ancient vampires who have ruled the night for centuries. They combine dark magic with martial prowess, draining life with every strike and commanding legions of lesser undead.",
+        "habitat": "Castles, Crypts, Dark Estates",
+        "danger": "Legendary",
+        "tips": "They regenerate health from damage. Use burst damage and holy effects. Sunlight is lethal. Stake through the heart to permanently kill.",
+    },
+    "Fire Elemental": {
+        "lore": "A being of pure flame from the Elemental Plane of Fire. It grows stronger in hot environments and can ignite everything around it simply by existing.",
+        "habitat": "Volcanic Chambers, Fire Plains, Magma Vents",
+        "danger": "Very High",
+        "tips": "Ice magic is super effective. Water magic can also work. Their bodies radiate intense heat making close combat dangerous without protection.",
+    },
+    "Ice Wraith": {
+        "lore": "Frozen spirits of mages who died in the cold depths. They haunt the coldest places, their mournful wails echoing through ice-covered halls.",
+        "habitat": "Frozen Caverns, Glaciers, Permafrost Regions",
+        "danger": "Very High",
+        "tips": "Fire magic disrupts their form and prevents them from reforming. They phase through physical attacks. Magical damage is required to harm them.",
+    },
+}
+
+BESTIARY.update(BESTIARY_MASSIVE)
+
+# ============================================================
+#  EXTENDED DIALOGUE DATABASE
+# ============================================================
+DIALOGUE_EXTENDED = {
+    "welcome": [
+        "Welcome, adventurer, to a world of magic and mystery!",
+        "The realm of Aetheris welcomes you! May your journey be legendary!",
+        "Another soul seeking fortune and glory? Welcome!",
+        "The gods have sent us a new hero. Welcome to Aetheris!",
+        "Step forward, brave one. Your adventure begins now!",
+    ],
+    "farewell": [
+        "May the winds guide you safely home.",
+        "Until we meet again, brave adventurer.",
+        "The realm will remember your deeds.",
+        "Go with the blessings of the gods.",
+        "Your legend grows with every step. Farewell!",
+    ],
+    "victory_npc": [
+        "Well fought! You've proven yourself today!",
+        "Magnificent! Truly a warrior to be reckoned with!",
+        "I haven't seen such skill in years! Impressive!",
+        "You've earned your place among the heroes!",
+        "That was incredible! You make it look easy!",
+    ],
+    "defeat_npc": [
+        "Don't be discouraged. Every hero falls sometimes.",
+        "Get up, dust yourself off, and try again.",
+        "Even the greatest heroes know defeat. Learn from it.",
+        "The road to legend is paved with setbacks.",
+        "You lost this battle, but the war continues!",
+    ],
+    "merchant_greeting": [
+        "Welcome to my shop! Best prices in the realm!",
+        "Step right up! Fresh inventory just arrived!",
+        "Ah, a customer! You have excellent timing!",
+        "Browse at your leisure. Everything is top quality!",
+        "Welcome, welcome! I have exactly what you need!",
+    ],
+    "innkeeper_greeting": [
+        "Welcome to the inn! Rooms are clean and the ale is cold!",
+        "Need a place to rest your head? We've got the best beds!",
+        "Come in, come in! The hearth is warm and the stew is hot!",
+        "A weary traveler! You've come to the right place!",
+        "Welcome to the Dragon's Breath Tavern! Make yourself at home!",
+    ],
+    "blacksmith_greeting": [
+        "Need a weapon forged or repaired? You've come to the right smithy!",
+        "I can make anything you need, as long as it's made of metal!",
+        "Looking for quality craftsmanship? Look no further!",
+        "My family has been forging weapons for five generations!",
+        "What can I forge for you today? I work with all metals!",
+    ],
+    "guard_greeting": [
+        "Halt! ... Oh, it's you. Carry on.",
+        "Keep your nose clean, traveler.",
+        "Nothing to report. Just doing my duty.",
+        "Stay safe out there. The roads can be dangerous.",
+        "If you see anything suspicious, report it immediately.",
+    ],
+    "fisher_greeting": [
+        "The fish are biting today! Best weather for it!",
+        "Hello there, angler! Looking to catch something big?",
+        "I've been fishing these waters for forty years. Let me give you some tips!",
+        "The big ones are running today! You don't want to miss this!",
+        "Welcome to the Sapphire Docks! The tournament is coming up soon!",
+    ],
+    "child_greeting": [
+        "Mister, mister! Are you a real hero?!",
+        "I want to be an adventurer just like you when I grow up!",
+        "Have you killed any dragons? Can I see your sword?",
+        "My dad says you're the bravest person he knows!",
+        "Can you teach me to fight? Please please please!",
+    ],
+    "elder_greeting": [
+        "Ah, youth. I remember when I was your age...",
+        "The world has changed so much. Not always for the better.",
+        "These young adventurers think they know everything.",
+        "I've lived through three wars and countless battles. Listen to an old man's wisdom.",
+        "The key to a long life is knowing when to walk away.",
+    ],
+    "quest_giver": [
+        "Thank goodness you're here! I need help with something!",
+        "I have a task that requires someone of your talents.",
+        "A problem has arisen that only a true adventurer can solve.",
+        "I've heard you're the best. I need your help with a delicate matter.",
+        "There's a reward in it for you, of course. A handsome one.",
+    ],
+    "random_villager": [
+        "Did you hear? Strange things have been happening in the old ruins.",
+        "The crops failed this year. The soil has been poisoned.",
+        "I saw a shadow move where no shadow should be.",
+        "The old mine has collapsed. They say something came out of it.",
+        "Be careful on the road. Bandits have been preying on travelers.",
+        "The tavern keeper makes the best stew in the realm. You should try it.",
+        "I once met a dragon. It was surprisingly polite.",
+        "My grandmother told me stories about the old kingdom. Magical times.",
+        "The stars have been strange lately. The mages are worried.",
+        "If you're looking for treasure, try the Sunken Cathedral. I've heard rumors.",
+    ],
+}
+
+def get_dialogue_line(category: str) -> str:
+    pool = DIALOGUE_EXTENDED.get(category, ["Hello."])
+    return random.choice(pool)
+
+# ============================================================
+#  WEATHER NARRATIVE DESCRIPTIONS
+# ============================================================
+WEATHER_NARRATIVE = {
+    "clear": [
+        "The sky is a brilliant blue, unmarred by clouds.",
+        "Sunlight bathes the landscape in warm gold.",
+        "Not a cloud in sight. Perfect weather for adventure.",
+        "The sun shines brightly, warming the earth below.",
+        "Clear skies stretch as far as the eye can see.",
+    ],
+    "rain": [
+        "Gentle rain begins to fall, pattering on the leaves.",
+        "The sky opens up and rain pours down in sheets.",
+        "A steady drizzle soaks everything it touches.",
+        "Raindrops create ripples on every surface.",
+        "The smell of wet earth fills the air as rain falls.",
+    ],
+    "storm": [
+        "Thunder roars overhead as lightning splits the sky!",
+        "The storm rages with fury, wind howling and rain lashing!",
+        "Lightning strikes close by, the thunder deafening!",
+        "The sky darkens as a massive storm rolls in!",
+        "Bolts of lightning dance across the churning clouds!",
+    ],
+    "fog": [
+        "Thick fog rolls in, reducing visibility to mere feet.",
+        "The mist clings to everything, muffling all sound.",
+        "You can barely see your hand in front of your face.",
+        "The fog is so thick it feels like walking through clouds.",
+        "Shapes loom out of the mist, then vanish just as quickly.",
+    ],
+    "snow": [
+        "Snowflakes begin to fall, each one uniquely beautiful.",
+        "A blanket of white covers the landscape in silence.",
+        "The snow falls heavily, accumulating quickly.",
+        "The world is transformed into a winter wonderland.",
+        "Snow crunches underfoot as you make your way through it.",
+    ],
+    "heatwave": [
+        "The heat is oppressive, making every movement a struggle.",
+        "The sun beats down mercilessly from a pale sky.",
+        "Heat shimmers rise from the ground, distorting the view.",
+        "Sweat pours from your brow as the temperature soars.",
+        "The air is thick and heavy with heat and humidity.",
+    ],
+    "windy": [
+        "Strong gusts of wind make travel difficult.",
+        "The wind howls through the area, bending trees and scattering debris.",
+        "You lean into the wind, fighting against its force.",
+        "Gusts of wind whip past you, carrying leaves and dust.",
+        "The wind seems to have a voice, whispering ancient secrets.",
+    ],
+    "eclipse": [
+        "The sky darkens as the moon covers the sun! The world falls into twilight!",
+        "An eclipse casts an eerie shadow over everything!",
+        "The world goes dark as the eclipse reaches totality!",
+        "Strange colors paint the sky during this rare eclipse!",
+        "The eclipse awakens ancient powers. Magic surges through the air!",
+    ],
+}
+
+def get_weather_narrative(weather_key: str) -> str:
+    pool = WEATHER_NARRATIVE.get(weather_key, ["The weather is unremarkable."])
+    return random.choice(pool)
+
+# ============================================================
+#  EXTENDED STATUS EFFECT NARRATIVE
+# ============================================================
+STATUS_NARRATIVE = {
+    "burning": [
+        "Flames lick at your body, searing your flesh!",
+        "The fire clings to you, refusing to be extinguished!",
+        "Smoke rises from your armor as the flames burn!",
+        "You feel the intense heat of the fire consuming you!",
+        "The burning sensation is agonizing!",
+    ],
+    "frozen": [
+        "Ice crystals form on your skin, slowing your movements!",
+        "Your limbs grow stiff and unresponsive from the cold!",
+        "Frost spreads across your armor, locking your joints!",
+        "The cold seeps into your bones, draining your strength!",
+        "You feel yourself slowing as the ice takes hold!",
+    ],
+    "poisoned": [
+        "You feel the venom coursing through your veins!",
+        "Black lines spread from the wound as poison takes effect!",
+        "Your vision blurs as the poison affects your senses!",
+        "Nausea washes over you as the toxin spreads!",
+        "Your limbs feel heavy and weak from the poison!",
+    ],
+    "bleeding": [
+        "Blood pours from the wound, soaking your clothes!",
+        "You feel blood running down your arm from the gash!",
+        "The wound bleeds freely, refusing to clot!",
+        "Each movement sends fresh pain through the injury!",
+        "You're losing blood fast! You need to stop the bleeding!",
+    ],
+    "shielded": [
+        "A barrier of energy surrounds you, deflecting attacks!",
+        "Glowing shields of light orbit around your body!",
+        "You feel protected by a powerful magical ward!",
+        "The air shimmers around you as the shield activates!",
+        "A protective bubble encloses you like a second skin!",
+    ],
+    "enraged": [
+        "RAGE CONSUMES YOU! Your vision turns red!",
+        "A primal fury erupts from deep within you!",
+        "You feel an uncontrollable rage building inside!",
+        "Your blood boils with battle fury!",
+        "You abandon all restraint and give in to pure rage!",
+    ],
+    "regenerating": [
+        "Warm energy flows through your body, mending wounds!",
+        "You feel your injuries knitting together as magic works!",
+        "A gentle glow surrounds you as you heal!",
+        "The pain fades as regenerative magic takes hold!",
+        "Your wounds close and your strength returns!",
+    ],
+    "stunned": [
+        "Your vision explodes with stars! You can't focus!",
+        "The impact rattles your brain, leaving you disoriented!",
+        "You're left reeling, unable to respond!",
+        "The world spins around you as you struggle to recover!",
+        "Your senses are overwhelmed! You can barely stand!",
+    ],
+}
+
+def get_status_narrative(effect_key: str) -> str:
+    pool = STATUS_NARRATIVE.get(effect_key, ["Something is affecting you!"])
+    return random.choice(pool)
+
+# ============================================================
+#  EXTENDED ENEMY DEATH DESCRIPTIONS
+# ============================================================
+ENEMY_DEATH_DESC = {
+    "goblin": [
+        "The goblin lets out a final squeak and collapses.",
+        "With a gurgling cry, the goblin falls.",
+        "The goblin's eyes go glassy as it drops to the ground.",
+        "A final groan escapes the goblin before it goes still.",
+        "The goblin twitches once and then lies motionless.",
+    ],
+    "troll": [
+        "The massive troll crashes to the ground like a felled tree!",
+        "With a ground-shaking thud, the troll collapses!",
+        "The troll lets out a final, earth-shattering roar before falling!",
+        "The troll's eyes close as it finally succumbs to its wounds!",
+        "The troll crumbles to the ground, its regeneration finally failing!",
+    ],
+    "undead": [
+        "The undead crumbles to dust, its unnatural energy dissipating!",
+        "With a shriek, the undead falls apart into a pile of bones!",
+        "Dark energy escapes the undead as it finally falls!",
+        "The undead collapses, the magic animating it finally extinguished!",
+        "With one last groan, the undead creature falls still!",
+    ],
+    "elemental": [
+        "The elemental dissipates into its constituent energy!",
+        "With a flash, the elemental unravels and scatters!",
+        "The elemental's form becomes unstable and collapses!",
+        "Raw energy scatters as the elemental is defeated!",
+        "The elemental dissolves into a cloud of pure magic!",
+    ],
+    "dragon": [
+        "The dragon lets out a final roar that shakes the mountains!",
+        "With earth-shattering force, the dragon crashes to the ground!",
+        "The dragon's eyes lose their fire as it takes its last breath!",
+        "A final plume of smoke rises from the dragon's nostrils before it stills!",
+        "The mighty dragon falls, its legend finally ended!",
+    ],
+    "generic": [
+        "The enemy falls, defeated at last!",
+        "With a final cry, the enemy collapses!",
+        "The creature goes still. Victory is yours!",
+        "Your foe drops to the ground, life fading from its eyes!",
+        "The enemy is vanquished! The battle is won!",
+    ],
+}
+
+def get_enemy_death_desc(enemy_type: str) -> str:
+    for etype in ["goblin", "troll", "undead", "elemental", "dragon"]:
+        if etype in enemy_type.lower():
+            pool = ENEMY_DEATH_DESC.get(etype, ENEMY_DEATH_DESC["generic"])
+            return random.choice(pool)
+    return random.choice(ENEMY_DEATH_DESC["generic"])
+
+# ============================================================
+#  LOOT FOUND DESCRIPTIONS
+# ============================================================
+LOOT_FOUND_DESC = {
+    "common": [
+        "You find some coins and basic supplies.",
+        "Nothing special, but every bit helps.",
+        "You pocket the finds. Not bad for a quick search.",
+        "Some minor loot, but it all adds up.",
+        "You find a few useful items amidst the debris.",
+    ],
+    "uncommon": [
+        "This is a decent find! Worth some gold!",
+        "Nice! This could come in handy!",
+        "A solid find! You tuck it away for later.",
+        "Not bad at all! This is worth a pretty penny!",
+        "A useful discovery! You add it to your pack.",
+    ],
+    "rare": [
+        "Jackpot! This is a remarkable find!",
+        "Incredible! This is worth a fortune!",
+        "You can barely believe your eyes! Such a treasure!",
+        "This is the kind of find adventurers dream about!",
+        "Your heart races as you realize the value of this discovery!",
+    ],
+    "legendary": [
+        "LEGENDARY FIND! This is the stuff of songs and legends!",
+        "YOU HAVE FOUND A LEGENDARY ITEM! Such power!",
+        "The gods themselves must have guided you to this treasure!",
+        "This item radiates power beyond anything you've seen!",
+        "A once-in-a-lifetime discovery! This will make you famous!",
+    ],
+}
+
+def get_loot_desc(rarity: str = "common") -> str:
+    pool = LOOT_FOUND_DESC.get(rarity, LOOT_FOUND_DESC["common"])
+    return random.choice(pool)
+
+# ============================================================
+#  EXTENDED PLAYER ACTIONS
+# ============================================================
+PLAYER_ACTIONS = [
+    "Inspect surroundings",
+    "Search for loot",
+    "Check equipment condition",
+    "Read map",
+    "Review journal",
+    "Sharpen weapon",
+    "Polish armor",
+    "Stretch and exercise",
+    "Practice combat forms",
+    "Study magic theory",
+    "Identify plants and herbs",
+    "Track animals",
+    "Check the weather",
+    "Set up camp",
+    "Gather firewood",
+    "Cook a meal",
+    "Write in journal",
+    "Meditate",
+    "Pray to the gods",
+    "Sing a traveling song",
+    "Whistle a tune",
+    "Examine strange flora",
+    "Follow animal tracks",
+    "Look for hidden paths",
+    "Climb a tree for a better view",
+]
+
+def get_player_action() -> str:
+    return random.choice(PLAYER_ACTIONS)
+
+# ============================================================
+#  REFERENCE: ALL ENCHANTMENTS
+# ============================================================
+ALL_ENCHANTMENTS = [
+    {"name": "Sharpness", "effect": "Increases weapon damage", "type": "weapon", "max_level": 5},
+    {"name": "Power", "effect": "Increases ranged damage", "type": "bow", "max_level": 5},
+    {"name": "Thorns", "effect": "Reflects damage to attacker", "type": "armor", "max_level": 3},
+    {"name": "Unbreaking", "effect": "Increases durability", "type": "all", "max_level": 3},
+    {"name": "Fire Aspect", "effect": "Sets target on fire", "type": "weapon", "max_level": 2},
+    {"name": "Flame", "effect": "Ranged attacks ignite target", "type": "bow", "max_level": 2},
+    {"name": "Looting", "effect": "Increases loot drops", "type": "weapon", "max_level": 3},
+    {"name": "Divine Guard", "effect": "Chance to negate damage", "type": "shield", "max_level": 3},
+    {"name": "FrostGuard", "effect": "Reduces fire damage", "type": "armor", "max_level": 3},
+    {"name": "Fire Protection", "effect": "Reduces fire damage", "type": "armor", "max_level": 4},
+    {"name": "Blast Protection", "effect": "Reduces explosion damage", "type": "armor", "max_level": 4},
+    {"name": "Projectile Protection", "effect": "Reduces ranged damage", "type": "armor", "max_level": 4},
+    {"name": "Respiration", "effect": "HP regeneration over time", "type": "helmet", "max_level": 3},
+    {"name": "Feather Falling", "effect": "Reduces fall damage", "type": "boots", "max_level": 4},
+    {"name": "Infinity", "effect": "Chance to not consume ammo", "type": "bow", "max_level": 1},
+    {"name": "Mending", "effect": "Self-repair over time", "type": "all", "max_level": 3},
+    {"name": "Soulbound", "effect": "Returns on death", "type": "all", "max_level": 1},
+    {"name": "Vampirism", "effect": "Heal from damage dealt", "type": "weapon", "max_level": 3},
+    {"name": "Lifesteal", "effect": "HP steal on hit", "type": "weapon", "max_level": 2},
+    {"name": "Execute", "effect": "Bonus damage to low HP targets", "type": "weapon", "max_level": 3},
+    {"name": "Berserking", "effect": "More damage at low HP", "type": "weapon", "max_level": 2},
+    {"name": "Fortitude", "effect": "Increased max HP", "type": "armor", "max_level": 3},
+    {"name": "Agility", "effect": "Increased dodge chance", "type": "boots", "max_level": 3},
+    {"name": "Clarity", "effect": "Reduced spell cost", "type": "helmet", "max_level": 2},
+    {"name": "Reflection", "effect": "Chance to reflect spells", "type": "shield", "max_level": 2},
+    {"name": "Tenacity", "effect": "Reduced stun duration", "type": "armor", "max_level": 3},
+    {"name": "Alacrity", "effect": "Increased attack speed", "type": "weapon", "max_level": 2},
+    {"name": "Vitality", "effect": "Increased HP regeneration", "type": "armor", "max_level": 3},
+    {"name": "Bulwark", "effect": "Increased block chance", "type": "shield", "max_level": 3},
+    {"name": "Cunning", "effect": "Increased critical damage", "type": "weapon", "max_level": 3},
+    {"name": "Precision", "effect": "Increased hit chance", "type": "weapon", "max_level": 2},
+    {"name": "Siphon", "effect": "Drain enemy stats on hit", "type": "weapon", "max_level": 2},
+    {"name": "Corruption", "effect": "Inflict random status effects", "type": "weapon", "max_level": 3},
+    {"name": "Purity", "effect": "Reduce status effect duration", "type": "armor", "max_level": 2},
+    {"name": "Stability", "effect": "Cannot be knocked back", "type": "boots", "max_level": 1},
+    {"name": "Ruthlessness", "effect": "Ignore enemy defense", "type": "weapon", "max_level": 2},
+    {"name": "Guardian Angel", "effect": "Auto-revive on death", "type": "armor", "max_level": 1},
+    {"name": "Cursed Wound", "effect": "Enemies cannot heal", "type": "weapon", "max_level": 2},
+    {"name": "Static Charge", "effect": "Chance to shock attackers", "type": "armor", "max_level": 2},
+    {"name": "Ice Aura", "effect": "Slow nearby enemies", "type": "armor", "max_level": 2},
+    {"name": "Fire Shield", "effect": "Burn attackers", "type": "shield", "max_level": 2},
+    {"name": "Poison Touch", "effect": "Poison on hit", "type": "weapon", "max_level": 2},
+    {"name": "Parry Mastery", "effect": "Increased parry chance", "type": "weapon", "max_level": 3},
+    {"name": "Counter Strike", "effect": "Chance to counter on dodge", "type": "weapon", "max_level": 2},
+    {"name": "Overpower", "effect": "Break enemy guard", "type": "weapon", "max_level": 2},
+    {"name": "Revenge", "effect": "More damage after being hit", "type": "armor", "max_level": 3},
+    {"name": "Adrenaline", "effect": "Speed boost at low HP", "type": "boots", "max_level": 2},
+    {"name": "Last Stand", "effect": "Damage reduction at low HP", "type": "armor", "max_level": 2},
+    {"name": "Heroism", "effect": "Boost nearby allies", "type": "armor", "max_level": 1},
+]
+
+# ============================================================
+#  EXTENDED POTION EFFECT DESCRIPTIONS
+# ============================================================
+POTION_USE_DESC = {
+    "healing": [
+        "The warm liquid flows through you, mending wounds as it goes.",
+        "You feel the healing magic spread through your body.",
+        "Your injuries glow with soft light as they close.",
+        "The potion's warmth spreads from your stomach to your extremities.",
+        "Cool relief washes over you as your wounds heal.",
+    ],
+    "strength": [
+        "Fire courses through your veins! You feel immensely powerful!",
+        "Your muscles bulge and tighten as strength floods your body!",
+        "Power surges through every fiber of your being!",
+        "You feel like you could punch through a wall!",
+        "Raw power radiates from your core!",
+    ],
+    "defense": [
+        "Your skin hardens as the potion takes effect!",
+        "You feel a protective barrier forming around you!",
+        "Your body becomes as tough as iron!",
+        "The potion makes you feel invulnerable!",
+        "A layer of magical protection coats your body!",
+    ],
+    "speed": [
+        "The world seems to slow down as your reflexes sharpen!",
+        "Your feet feel lighter than air!",
+        "You feel an incredible lightness in your step!",
+        "Everything seems to move in slow motion!",
+        "You feel like you could outrun the wind!",
+    ],
+    "crit": [
+        "Your vision sharpens. You see every weakness clearly!",
+        "Your instincts sharpen to a razor's edge!",
+        "You can sense the exact moment to strike!",
+        "Your killer instinct awakens! Every movement feels lethal!",
+        "Time seems to pause as you identify every possible opening!",
+    ],
+}
+
+def get_potion_use_desc(potion_type: str) -> str:
+    pool = POTION_USE_DESC.get(potion_type, ["You drink the potion. It tastes interesting."])
+    return random.choice(pool)
+
+# ============================================================
+#  EXTENDED NPC BACKSTORY FRAGMENTS
+# ============================================================
+NPC_STORIES = [
+    "I used to be an adventurer like you. Then I took an arrow to the knee.",
+    "My grandfather fought in the Goblin War. He said it was hell on earth.",
+    "I was born in a small village that no longer exists. The goblins burned it.",
+    "I studied at the Grand Arcane Library for twenty years. Then I realized I preferred the simple life.",
+    "My family has been fishing these waters for ten generations. The sea is in our blood.",
+    "I was a knight once. But I made a choice that cost me everything.",
+    "I found this amulet in the ruins of an ancient temple. It's been my lucky charm ever since.",
+    "I've traveled to the Crystal Peaks. What I saw there changed me forever.",
+    "My sister was taken by the Shadow Guild. I've been searching for her ever since.",
+    "I once met a dragon. We shared a meal and talked about philosophy. Strange but true.",
+    "The Rotfang Depths are not just a place of corruption. There's beauty there too, if you know where to look.",
+    "I was a blacksmith's apprentice before I took up adventuring. I still know my way around a forge.",
+    "The stars speak to me. Not in words, but in feelings. They say something big is coming.",
+    "I've never told anyone this, but I can see ghosts. They're everywhere, just living their afterlives.",
+    "The best treasure I ever found wasn't gold or gems. It was a friend I made along the way.",
+    "I trained with the Iron Legion for five years. The discipline still guides me.",
+    "I'm not from around here. I came through a portal from another world.",
+    "I've been cursed with immortality. I've lived for three hundred years. It's not as fun as it sounds.",
+    "The forest speaks to those who listen. The trees remember everything.",
+    "I was a pirate before I retired. The Sapphire Sea hides more secrets than you can imagine.",
+]
+
+def get_npc_story() -> str:
+    return random.choice(NPC_STORIES)
+
+# ============================================================
+#  EXTENDED WORLD EVENTS
+# ============================================================
+WORLD_EVENTS_EXTRA = [
+    {
+        "name": "King's Decree",
+        "desc": "The King of Valdris has issued a decree calling for brave adventurers.",
+        "effect": "quests_available",
+        "duration": 3,
+    },
+    {
+        "name": "Goblin Raids",
+        "desc": "Goblin raiding parties have been spotted near the Crimson Fields.",
+        "effect": "increased_combat",
+        "duration": 2,
+    },
+    {
+        "name": "Merchant Festival",
+        "desc": "The Goldspire Market is having a festival! Prices are reduced!",
+        "effect": "discounts",
+        "duration": 2,
+    },
+    {
+        "name": "Fishing Frenzy",
+        "desc": "Fish are abundant at the Sapphire Docks! Tournament is coming!",
+        "effect": "better_fishing",
+        "duration": 3,
+    },
+    {
+        "name": "Dragon Sighting",
+        "desc": "A dragon has been spotted near the Crystal Peaks! Adventurers needed!",
+        "effect": "rare_mobs",
+        "duration": 2,
+    },
+    {
+        "name": "Plague Outbreak",
+        "desc": "A plague is spreading through the city. Healers are needed.",
+        "effect": "crisis",
+        "duration": 3,
+    },
+    {
+        "name": "Archaeological Dig",
+        "desc": "An ancient ruin has been discovered! Valuable artifacts await!",
+        "effect": "treasure_hunt",
+        "duration": 4,
+    },
+    {
+        "name": "Full Moon Eclipse",
+        "desc": "A rare lunar eclipse! Magical creatures are empowered!",
+        "effect": "magic_boosted",
+        "duration": 1,
+    },
+    {
+        "name": "Trade Embargo",
+        "desc": "A trade dispute has caused prices to rise in certain goods.",
+        "effect": "price_changes",
+        "duration": 3,
+    },
+    {
+        "name": "Champion's Tournament",
+        "desc": "The grand tournament is announced! The best fighters in the realm compete!",
+        "effect": "tournament",
+        "duration": 5,
+    },
+    {
+        "name": "Winter Storm",
+        "desc": "A massive winter storm blankets the region in snow.",
+        "effect": "weather_effect",
+        "duration": 3,
+    },
+    {
+        "name": "Harvest Festival",
+        "desc": "The harvest festival brings joy and plenty to the realm!",
+        "effect": "celebration",
+        "duration": 2,
+    },
+    {
+        "name": "Shadow Movement",
+        "desc": "The Shadow Guild is more active than usual. Something is brewing.",
+        "effect": "increased_danger",
+        "duration": 3,
+    },
+    {
+        "name": "Ancient Ritual",
+        "desc": "Strange lights have been seen at ancient sites. Someone is performing rituals.",
+        "effect": "magic_disturbance",
+        "duration": 2,
+    },
+    {
+        "name": "Refugee Wave",
+        "desc": "Refugees are fleeing from the eastern lands. Something terrible has happened.",
+        "effect": "humanitarian",
+        "duration": 4,
+    },
+]
+
+def get_random_world_event() -> Dict[str, Any]:
+    return random.choice(WORLD_EVENTS_EXTRA)
+
+# ============================================================
+#  EXTENDED CRAFTING MATERIALS
+# ============================================================
+CRAFTING_MATERIALS_EXTRA = [
+    {"name": "Iron Ore", "rarity": "common", "value": 50, "description": "Raw iron ore. Needs smelting."},
+    {"name": "Copper Ore", "rarity": "common", "value": 30, "description": "Soft metal, good for beginner crafts."},
+    {"name": "Tin Ore", "rarity": "common", "value": 25, "description": "Common metal used in alloys."},
+    {"name": "Silver Ore", "rarity": "uncommon", "value": 200, "description": "Precious metal with magical properties."},
+    {"name": "Gold Ore", "rarity": "uncommon", "value": 300, "description": "Precious metal, highly valued."},
+    {"name": "Platinum Ore", "rarity": "rare", "value": 800, "description": "Extremely rare and valuable metal."},
+    {"name": "Mithril Ore", "rarity": "rare", "value": 1500, "description": "Legendary light but strong metal."},
+    {"name": "Adamant Ore", "rarity": "very_rare", "value": 3000, "description": "The hardest known metal."},
+    {"name": "Orichalcum", "rarity": "legendary", "value": 10000, "description": "Mythical metal from the age of heroes."},
+    {"name": "Star Metal", "rarity": "legendary", "value": 20000, "description": "Metal from fallen stars, incredibly powerful."},
+    {"name": "Dragon Scale", "rarity": "very_rare", "value": 5000, "description": "Scale from a dragon, imbued with elemental power."},
+    {"name": "Phoenix Feather", "rarity": "legendary", "value": 15000, "description": "Feather from a phoenix, radiant with life energy."},
+    {"name": "Unicorn Hair", "rarity": "very_rare", "value": 4000, "description": "Hair from a unicorn, imbued with purity."},
+    {"name": "Griffin Feather", "rarity": "rare", "value": 2000, "description": "Feather from a griffin, imbued with sky magic."},
+    {"name": "Basilisk Scale", "rarity": "rare", "value": 2500, "description": "Scale from a basilisk, resistant to petrification."},
+    {"name": "Chimera Blood", "rarity": "very_rare", "value": 6000, "description": "Blood of a chimera, unstable but powerful."},
+    {"name": "Hydra Fang", "rarity": "legendary", "value": 12000, "description": "Fang from a hydra, contains regenerative properties."},
+    {"name": "Kraken Ink", "rarity": "legendary", "value": 18000, "description": "Ink from a kraken, used in the most powerful enchantments."},
+    {"name": "Fairy Dust", "rarity": "uncommon", "value": 500, "description": "Magical dust from fey creatures."},
+    {"name": "Shadow Essence", "rarity": "rare", "value": 3000, "description": "Concentrated shadow from the Shadowfell."},
+    {"name": "Light Essence", "rarity": "rare", "value": 3000, "description": "Concentrated light from the Celestial Plane."},
+    {"name": "Void Essence", "rarity": "legendary", "value": 25000, "description": "Essence from the Void itself, incredibly dangerous."},
+    {"name": "Time Crystal", "rarity": "legendary", "value": 20000, "description": "A crystal that contains frozen time."},
+    {"name": "Soul Gem", "rarity": "very_rare", "value": 8000, "description": "A gem that contains a fragment of a soul."},
+    {"name": "Mana Crystal", "rarity": "uncommon", "value": 400, "description": "A crystal that stores magical energy."},
+    {"name": "Rune Stone", "rarity": "rare", "value": 2000, "description": "A stone that can hold a single rune."},
+    {"name": "Enchanting Dust", "rarity": "uncommon", "value": 300, "description": "Dust used in enchanting processes."},
+    {"name": "Binding Agent", "rarity": "common", "value": 100, "description": "Used to bind magical properties to items."},
+    {"name": "Arcane Thread", "rarity": "uncommon", "value": 250, "description": "Thread imbued with arcane energy."},
+    {"name": "Dragonbone", "rarity": "legendary", "value": 10000, "description": "Bone from a dragon, incredibly strong and magical."},
+]
+
+option = 0  # ensure option is defined
+while option != 17:
