@@ -768,6 +768,7 @@
                 "Class": "Potion of Healing",
                 "Cost": 200
             }
-        ]
+        ],
+        "achievements": {}
     }
 }
