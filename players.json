@@ -4434,5 +4434,52 @@
             }
         ],
         "achievements": {}
+    },
+    "FangDane mega": {
+        "Name": "FangDane mega",
+        "Lvl": 1,
+        "Rank": 10000,
+        "Max EXP": 20,
+        "EXP": 0,
+        "Gold": 50,
+        "Diamond": 1,
+        "Dragonite": 0,
+        "Celestium Prism": 0,
+        "HP": 1700,
+        "STR": 80,
+        "SP": 20,
+        "Crit": 7,
+        "DEF": 70,
+        "Reputation": 5,
+        "Weapon": {
+            "Name": "Wooden Sword",
+            "ATK": 4,
+            "SP": 1,
+            "Crit": 1.5,
+            "DUR": 60,
+            "Class": "Weapon",
+            "Cost": 400
+        },
+        "Left Hand": {
+            "Name": "Wooden Shield",
+            "DEF": 2,
+            "SP": 1,
+            "DUR": 60,
+            "Class": "Shield",
+            "Cost": 400
+        },
+        "Helmet": {},
+        "Chestplate": {},
+        "Leggings": {},
+        "Boots": {},
+        "Backpack": [
+            {
+                "Name": "Potion of Healing",
+                "Tier": 1,
+                "Effect": 500,
+                "Class": "Potion of Healing",
+                "Cost": 200
+            }
+        ]
     }
 }
