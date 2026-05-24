@@ -1815,7 +1815,9 @@ def save_players(players, filename="players.json"):
     with open(filename, "w") as file:
         json.dump(players, file, indent=4)
 
-from ui import clear, type, fasttype, chat, event, menu_panel, info_panel, section, stats_table, equip_card, inventory_table, loading_bar, console
+from settings import SETTINGS
+from rich.prompt import Prompt
+from ui import clear, type, fasttype, chat, event, menu_panel, info_panel, section, stats_table, equip_card, inventory_table, loading_bar, console, zone_header, small_title, announcement, combat_panel, int_prompt
 
 def run_arena_style_combat(stats: Dict[str, Any], foe: Dict[str, Any]) -> Tuple[bool, int]:
     return _arena_combat_engine(stats, foe, type, clear, fasttype)
@@ -2174,7 +2176,7 @@ def adventure() -> None:
         console.print("  [bold cyan]5.[/bold cyan]  [bold white]Return to town[/bold white]")
         console.print()
         try:
-            choice = int(console.input("Where to: "))
+            choice = int_prompt("Where to: ")
         except ValueError:
             choice = 0
         clear()
@@ -2245,7 +2247,7 @@ def rotfang_depths() -> None:
         prism_ct = boss[n].get("Prisms", 1)
         type(f"{i}. {n} (~{boss[n]['EXP']} EXP · {prism_ct} prism(s))")
         time.sleep(0.05)
-    pick = int(console.input("Choose a foe (number), or 0 to leave: "))
+    pick = int_prompt("Choose a foe (number), or 0 to leave: ")
     clear()
     if pick == 0:
         type("You climb back toward town.\n")
@@ -2279,6 +2281,61 @@ def rotfang_depths() -> None:
         type("You barely escape Rotfang Depths alive...")
         time.sleep(0.9)
     clear()
+
+# ============================================================
+#  ZONE DESCRIPTION DATA & HELPERS
+# ============================================================
+ZONE_DESCRIPTIONS = {
+    "crimson": {
+        "name": "Crimson Fields",
+        "enter": [
+            "The wind carries the scent of iron and old blood as you step onto the battlefield.",
+            "Endless fields of red grass stretch before you, dotted with ruined siege engines.",
+            "The ground is scarred by old battles — craters, trenches, and shattered armor.",
+            "A cold wind sweeps across the plains, carrying the echoes of forgotten war cries.",
+        ],
+        "ambient": [
+            "You hear the clatter of goblin weapons in the distance.",
+            "A vulture circles overhead, watching patiently.",
+            "The wind whispers through broken spear shafts embedded in the earth.",
+            "Footprints in the mud suggest recent patrols passed through.",
+        ],
+        "enemies": ["Goblin Recruit", "Goblin Lieutenant", "Goblin Archer", "Troll Grunt"],
+    },
+    "rotfang": {
+        "name": "Rotfang Depths",
+        "enter": [
+            "A damp, earthy smell rises from the darkness below.",
+            "Strange fungal growths line the cavern walls, pulsing with faint light.",
+            "Water drips somewhere in the depths, echoing like distant drums.",
+            "The air grows thick and warm as you descend into the unknown.",
+        ],
+        "ambient": [
+            "Strange echoes bounce off the cavern walls around you.",
+            "You catch the glimmer of eyes in the darkness — then nothing.",
+            "The ground trembles faintly, as if something massive stirs below.",
+            "Whispers in an unknown tongue skitter at the edge of hearing.",
+        ],
+        "enemies": ["Snow Shaman", "Flame Shaman", "Fire Elemental", "Ice Wraith", "Shadow Assassin"],
+    },
+}
+
+def _describe_zone(zone_key, ambient=False):
+    zone = ZONE_DESCRIPTIONS.get(zone_key)
+    if not zone:
+        return
+    if ambient:
+        console.print(f"[dim italic]{random.choice(zone['ambient'])}[/dim italic]")
+    else:
+        text = random.choice(zone["enter"])
+        type(text, 0.02, "italic white")
+        time.sleep(0.5)
+
+def describe_zone_entry(zone_key):
+    _describe_zone(zone_key, ambient=False)
+
+def describe_zone_ambient(zone_key):
+    _describe_zone(zone_key, ambient=True)
 
 def quest():
     """Cinematic intro sequence with full effects."""
@@ -2380,23 +2437,6 @@ def quest():
             "enemies": ["Snow Shaman", "Flame Shaman", "Fire Elemental", "Ice Wraith", "Shadow Assassin"],
         },
     }
-
-    def _describe_zone(zone_key, ambient=False):
-        zone = ZONE_DESCRIPTIONS.get(zone_key)
-        if not zone:
-            return
-        if ambient:
-            console.print(f"[dim italic]{random.choice(zone['ambient'])}[/dim italic]")
-        else:
-            text = random.choice(zone["enter"])
-            type(text, 0.02, "italic white")
-            time.sleep(0.5)
-
-    def describe_zone_entry(zone_key):
-        _describe_zone(zone_key, ambient=False)
-
-    def describe_zone_ambient(zone_key):
-        _describe_zone(zone_key, ambient=True)
 # ============================================================
 #  STORY CHAPTERS — Opening Narratives
 # ============================================================
@@ -2475,7 +2515,7 @@ def welcome() -> Dict[str, Any]:
     time.sleep(0.2)
     dialogue("Are you new to these lands, or do you return from previous adventures?", "narrator", 0.03)
     time.sleep(0.3)
-    response = int(console.input("[bold yellow]1. Register  |  2. Login: [/bold yellow]"))
+    response = int_prompt("[bold yellow]1. Register  |  2. Login: [/bold yellow]")
     clear()
     if response == 1:
         screen_title("NAME YOURSELF", "A name carries power in this world")
@@ -2735,7 +2775,7 @@ def arena():
     time.sleep(0.1)
     type("\t2. Duel Clash\n")
     time.sleep(0.1)
-    gamemode = int(console.input("Which game mode would you like to play: "))
+    gamemode = int_prompt("Which game mode would you like to play: ")
     clear()
     if gamemode == 1:
         start("Arena", "Sharpening blades for", 2, 3.6)
@@ -2772,7 +2812,7 @@ def arena():
             ======================================
             """
             fasttype(description)
-            hi = int(console.input("Press 1 to continue: "))
+            hi = int_prompt("Press 1 to continue: ")
             clear()
             if hi == 1:
                 time.sleep(0)
@@ -2952,7 +2992,7 @@ def fishing():
         time.sleep(0.1)
         console.print("\t\tNuclear Nibble Lure | Count: 80\n")
         time.sleep(0.1)
-        pack = int(console.input("Which pack do you want to buy ( 1, 2, 3 ): "))
+        pack = int_prompt("Which pack do you want to buy ( 1, 2, 3 ): ")
         clear()
         if pack == 1:
             if stats["Gold"] >= 500:
@@ -2971,10 +3011,14 @@ def fishing():
         if pack == 3:
             if stats["Gold"] >= 10000:
                 stats["Gold"] -= 10000
-                rod = {"Name": "Dragon’s Tongue Rod", "LCK": 3}
+                rod = {"Name": "Dragon's Tongue Rod", "LCK": 3}
                 lure = {"Name": "Nuclear Nibble Lure", "Count": 80, "LCK": 3}
             else:
                 broke = True
+        if pack not in (1, 2, 3):
+            type("Invalid pack selection!")
+            time.sleep(1)
+            broke = True
         if broke:
             console.print("You don't have enough money to buy this pack!")
             time.sleep(1.5)
@@ -2983,7 +3027,7 @@ def fishing():
             add = console.input("Do you want to buy more lure(yes/no): ")
             clear()
             if add == "yes":
-                cnt = int(console.input("How many multipliers do you want to buy(Each one doubles your lure): "))
+                cnt = int_prompt("How many multipliers do you want to buy(Each one doubles your lure): ")
                 clear()
                 cost = 100
                 for i in range(cnt):
@@ -3253,7 +3297,7 @@ def shop():
                             time.sleep(0.1)
                             console.print(f"   {key}: {value}")
                         break
-                price = int(console.input(f"Enter the price you want to sell {sell} for: "))
+                price = int_prompt(f"Enter the price you want to sell {sell} for: ")
                 cost = 0
                 for item in stats["Backpack"]:
                     if item["Name"] == sell:
@@ -3319,11 +3363,11 @@ def shop():
         time.sleep(0.1)
         console.print("4. Armor\n")
         time.sleep(0.1)
-        section = console.input("Which section would you like to go to: ").lower()
+        shop_section = console.input("Which section would you like to go to: ").lower()
         clear()
-        if section == "1" or section == "normal" or section == "recruit" or section == "normal/recruit" or section == "2" or section == "elite" or section == "elite swords":
+        if shop_section == "1" or shop_section == "normal" or shop_section == "recruit" or shop_section == "normal/recruit" or shop_section == "2" or shop_section == "elite" or shop_section == "elite swords":
             start("Swords", "Loading", 3, 7.5)
-        if section == "1" or section == "normal" or section == "recruit" or section == "normal/recruit":
+        if shop_section == "1" or shop_section == "normal" or shop_section == "recruit" or shop_section == "normal/recruit":
             for i in swords:
                 start(i["Name"], "Analysing", 1, 2)
                 console.print("\n\n")
@@ -3364,7 +3408,7 @@ def shop():
                 else:
                     break
 
-        if section == "2" or section == "elite" or section == "elite swords":
+        if shop_section == "2" or shop_section == "elite" or shop_section == "elite swords":
             for sword in elite_swords:
                 start(sword["Name"], "Analysing", 2, 4)
                 clear()
@@ -3405,7 +3449,7 @@ def shop():
                 else:
                     break
 
-        if section == "3" or section == "potions":
+        if shop_section == "3" or shop_section == "potions":
             tier = 1
             start("Potions", "Loading", 3, 7.5)
             start("Potions", "Analysing", 3, 7.5)
@@ -3449,7 +3493,7 @@ def shop():
                         if potion == "Potion of Healing":
                             type("The higher the tier, the more effective it is but the more it costs.")
                             time.sleep(0.5)
-                            tier = int(console.input("Enter the tier of the potion you want to purchase(1, 2, 3, etc): "))
+                            tier = int_prompt("Enter the tier of the potion you want to purchase(1, 2, 3, etc): ")
                             console.print()
                             time.sleep(0.5)
                             console.print("Potion of Healing at Tier ", tier, " costs ", i["Cost"] + ((tier - 1) * 50), "and heals for", i["Effect"] + ((tier - 1) * 100))
@@ -3460,7 +3504,7 @@ def shop():
                         else:
                             type("The higher the tier, the more effective it is but the more it costs.")
                             time.sleep(0.5)
-                            tier = int(console.input("Enter the tier of the potion you want to purchase(1, 2, 3, etc): "))
+                            tier = int_prompt("Enter the tier of the potion you want to purchase(1, 2, 3, etc): ")
                             console.print()
                             time.sleep(0.5)
                             console.print("Potion of ", potion, " at Tier ", tier, " costs ", i["Cost"] + ((tier - 1) * 25), "and increases your ", potion, " by", i["Effect"] + ((tier - 1) * 0.1))
@@ -3498,7 +3542,7 @@ def shop():
                         time.sleep(2)
                         break
 
-        if section == "4" or section == "armor":
+        if shop_section == "4" or shop_section == "armor":
             console.print("1. Helmets\n")
             time.sleep(0.1)
             console.print("2. Chestplates\n")
@@ -3926,7 +3970,7 @@ def starlight_armory():
                             console.print("\t Cost: 3 Celestium Prism", "\n")
                             time.sleep(0.2)
                             console.print("_________________________\n\n")
-                            enchant = int(console.input("Enter the level of the enchant you want to apply(25 | 60 | 100 | Type 1 if you want to leave): "))
+                            enchant = int_prompt("Enter the level of the enchant you want to apply(25 | 60 | 100 | Type 1 if you want to leave): ")
                             if enchant == 1:
                                 pass
                             else: 
@@ -4015,7 +4059,7 @@ def starlight_armory():
                             console.print("\t Cost: 3 Celestium Prism", "\n")
                             time.sleep(0.2)
                             console.print("_________________________\n\n")
-                            enchant = int(console.input("Enter the level of the enchant you want to apply(25 | 60 | 100 | Type 1 if you want to leave): "))
+                            enchant = int_prompt("Enter the level of the enchant you want to apply(25 | 60 | 100 | Type 1 if you want to leave): ")
                             if enchant == 1:
                                 pass
                             else: 
@@ -4102,7 +4146,7 @@ def starlight_armory():
                                 console.print("\t Cost: 3 Celestium Prism", "\n")
                                 time.sleep(0.2)
                                 console.print("_________________________\n\n")
-                                enchant = int(console.input("Enter the level of the enchant you want to apply(25 | 60 | 100 | Type 1 if you want to leave): "))
+                                enchant = int_prompt("Enter the level of the enchant you want to apply(25 | 60 | 100 | Type 1 if you want to leave): ")
                                 if enchant == 1:
                                     pass
                                 else: 
@@ -4188,7 +4232,7 @@ def starlight_armory():
                                 console.print("\t Cost: 3 Celestium Prism", "\n")
                                 time.sleep(0.2)
                                 console.print("_________________________\n\n")
-                                enchant = int(console.input("Enter the level of the enchant you want to apply(25 | 60 | 100 | Type 1 if you want to leave): "))
+                                enchant = int_prompt("Enter the level of the enchant you want to apply(25 | 60 | 100 | Type 1 if you want to leave): ")
                                 if enchant == 1:
                                     pass
                                 else: 
@@ -4274,7 +4318,7 @@ def starlight_armory():
                                 console.print("\t Cost: 3 Celestium Prism", "\n")
                                 time.sleep(0.2)
                                 console.print("_________________________\n\n")
-                                enchant = int(console.input("Enter the level of the enchant you want to apply(25 | 60 | 100 | Type 1 if you want to leave): "))
+                                enchant = int_prompt("Enter the level of the enchant you want to apply(25 | 60 | 100 | Type 1 if you want to leave): ")
                                 if enchant == 1:
                                     pass
                                 else: 
@@ -4360,7 +4404,7 @@ def starlight_armory():
                                 console.print("\t Cost: 3 Celestium Prism", "\n")
                                 time.sleep(0.2)
                                 console.print("_________________________\n\n")
-                                enchant = int(console.input("Enter the level of the enchant you want to apply(25 | 60 | 100 | Type 1 if you want to leave): "))
+                                enchant = int_prompt("Enter the level of the enchant you want to apply(25 | 60 | 100 | Type 1 if you want to leave): ")
                                 if enchant == 1:
                                     pass
                                 else: 
@@ -4445,7 +4489,7 @@ def obsidian_anvil():
                 time.sleep(0.2)
                 console.print("-------------------------")
                 time.sleep(0.2)
-                hi = int(console.input("Enter the level of the repair you want to do | Type 0 to leave: "))
+                hi = int_prompt("Enter the level of the repair you want to do | Type 0 to leave: ")
                 if hi == 0:
                     pass
                 else:
@@ -4466,7 +4510,7 @@ def obsidian_anvil():
                 time.sleep(0.2)
                 console.print("------------------------")
                 time.sleep(0.2)
-                hi = int(console.input("Enter the level of the repair you want to do | Type 0 to leave: "))
+                hi = int_prompt("Enter the level of the repair you want to do | Type 0 to leave: ")
                 if hi == 0:
                     pass
                 else:
@@ -4800,18 +4844,18 @@ def change_loadout_armor():
         var = 0
         var1 = 0
         while var == 0:
-            boots = console.input("What boots would you like to equip(Type 1 if you want to leave): ")
-            if boots == "1":
+            boot_name = console.input("What boots would you like to equip(Type 1 if you want to leave): ")
+            if boot_name == "1":
                 var1 = 1
                 break
             found = False
             for item in stats["Backpack"]:
                 if "Name" in item and "Class" in item:
-                    if item["Name"] == boots and item["Class"] == "Boots":
+                    if item["Name"] == boot_name and item["Class"] == "Boots":
                         found = True
                         break
             clear()
-            console.print(f"Searching for {boots}...")
+            console.print(f"Searching for {boot_name}...")
             time.sleep(random.uniform(0, 4))
             if found:
                 console.print("🎯 Boots found!")
@@ -4821,12 +4865,12 @@ def change_loadout_armor():
                 time.sleep(1)
                 break
             time.sleep(0.5)
-            console.print(f"Equiping {boots}...")
+            console.print(f"Equiping {boot_name}...")
             time.sleep(random.uniform(0, 3))
             for i in range(len(stats["Backpack"])):
-                if "Name" in stats["Backpack"][i] and "Class" in stats["Backpack"][i] and stats["Backpack"][i]["Name"] == boots and stats["Backpack"][i]["Class"] == "Boots":
+                if "Name" in stats["Backpack"][i] and "Class" in stats["Backpack"][i] and stats["Backpack"][i]["Name"] == boot_name and stats["Backpack"][i]["Class"] == "Boots":
                     stats["Backpack"][i], stats["Boots"] = stats["Boots"], stats["Backpack"][i]
-                    console.print(f"You equipped {boots}!")
+                    console.print(f"You equipped {boot_name}!")
                     break
             time.sleep(2)
             break
@@ -14801,6 +14845,71 @@ BESTIARY["Ult Monster 697"] = {"lore": "Mon lore 697.", "habitat": "Uk", "danger
 BESTIARY["Ult Monster 698"] = {"lore": "Mon lore 698.", "habitat": "Uk", "danger": "Var", "tips": "Fight."}
 BESTIARY["Ult Monster 699"] = {"lore": "Mon lore 699.", "habitat": "Uk", "danger": "Var", "tips": "Fight."}
 
+
+# ============================================================
+#  MISSING UTILITY FUNCTIONS — Runtime Patch
+# ============================================================
+def track_stat(stats: Dict[str, Any], key: str, amount: int = 1) -> None:
+    if key not in stats:
+        stats[key] = 0
+    stats[key] += amount
+
+def get_loot_desc(rarity: str = "common") -> str:
+    pool = {
+        "common": ["You find some coins.", "Nothing special.", "Every bit helps."],
+        "uncommon": ["Nice find!", "This is decent!", "Worth some gold!"],
+        "rare": ["Jackpot!", "Incredible find!", "Your heart races!"],
+        "legendary": ["LEGENDARY FIND!", "YOU FOUND A LEGENDARY ITEM!", "The gods guided you!"],
+    }
+    return random.choice(pool.get(rarity, pool["common"]))
+
+def get_enemy_death_desc(enemy_type: str) -> str:
+    pools = {
+        "goblin": ["The goblin squeaks and collapses.", "With a gurgling cry, the goblin falls."],
+        "troll": ["The troll crashes to the ground!", "With a ground-shaking thud, the troll collapses!"],
+        "undead": ["The undead crumbles to dust!", "Dark energy escapes as it falls!"],
+        "elemental": ["The elemental dissipates into energy!", "With a flash, it unravels!"],
+        "dragon": ["The dragon roars one last time!", "The mighty dragon falls!"],
+    }
+    for etype in pools:
+        if etype in enemy_type.lower():
+            return random.choice(pools[etype])
+    return random.choice(["The enemy falls, defeated!", "Victory is yours!"])
+
+def roll_treasure_chest(stats: Dict[str, Any], tier: int = 1) -> None:
+    gold = random.randint(100 * tier, 1000 * tier)
+    stats["Gold"] = stats.get("Gold", 0) + gold
+    event(f"Found {gold} gold in the chest!", "gold")
+    if random.random() < 0.3 * tier:
+        item = {"Name": f"Treasure Item T{tier}", "Class": "Artifact", "Cost": 1000 * tier}
+        stats["Backpack"].append(item)
+        event(f"Found: {item['Name']}!", "loot")
+
+def reputation_discount(stats: Dict[str, Any]) -> float:
+    rep = stats.get("Reputation", 0)
+    if rep >= 1000: return 0.7
+    if rep >= 500: return 0.8
+    if rep >= 200: return 0.9
+    if rep >= 50: return 0.95
+    return 1.0
+
+def reputation_surcharge(stats: Dict[str, Any]) -> float:
+    rep = stats.get("Reputation", 0)
+    if rep <= -100: return 1.5
+    if rep <= -50: return 1.3
+    if rep <= -10: return 1.1
+    return 1.0
+
+def get_potion_use_desc(potion_type: str) -> str:
+    descs = {
+        "healing": ["The warm liquid mends your wounds.", "Healing magic spreads through you."],
+        "strength": ["Fire courses through your veins!", "Power surges through you!"],
+        "defense": ["Your skin hardens!", "A protective barrier forms around you!"],
+        "speed": ["The world seems to slow down!", "Your feet feel lighter than air!"],
+        "crit": ["Your vision sharpens!", "You see every weakness clearly!"],
+    }
+    pool = descs.get(potion_type, ["You drink the potion."])
+    return random.choice(pool)
 
 option = 0  # ensure option is defined
 

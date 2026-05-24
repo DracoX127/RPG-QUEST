@@ -368,7 +368,7 @@ def loading_bar(description, duration):
     progress = Progress(
         SpinnerColumn("dots", style=f"bold {PC()}"),
         TextColumn(f"[bold {PC()}]{description}[/bold {PC()}]"),
-        BarColumn(bar_width=40, style=BC(), completed_style=C("success"), finished_style=C("success")),
+        BarColumn(bar_width=40, style=BC(), complete_style=C("success"), finished_style=C("success")),
         TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
         TimeRemainingColumn(),
         console=console,

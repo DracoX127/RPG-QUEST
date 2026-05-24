@@ -77,7 +77,10 @@ def run_arena_style_combat(
         time.sleep(0.1)
         console.print("=======================\n")
         time.sleep(0.1)
-        attack = int(console.input("Enter a number: "))
+        try:
+            attack = int(console.input("Enter a number: "))
+        except ValueError:
+            attack = 0
         clr()
         events = [
             "You swing your sword and strike the opponent!",

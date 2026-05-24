@@ -368,7 +368,7 @@ class Settings:
 
     def get_difficulty(self) -> Dict[str, Any]:
         diff = self._data.get("difficulty", "normal")
-        from systems import DIFFICULTY
+        from main import DIFFICULTY
         return DIFFICULTY.get(diff, DIFFICULTY["normal"])
 
     def get_difficulty_name(self) -> str:
@@ -392,7 +392,7 @@ class Settings:
         return list(PANEL_STYLES.keys())
 
     def get_difficulty_list(self) -> list:
-        from systems import DIFFICULTY
+        from main import DIFFICULTY
         return [(k, v["label"], v["desc"]) for k, v in DIFFICULTY.items()]
 
 

@@ -172,7 +172,7 @@ class QuestTracker:
             if reward_key == "Gold":
                 self.stats["Gold"] = self.stats.get("Gold", 0) + reward_val
             elif reward_key == "EXP":
-                from RPG_QUEST_2 import grant_exp
+                from main import grant_exp
                 grant_exp(self.stats, reward_val)
             else:
                 self.stats[reward_key] = self.stats.get(reward_key, 0) + reward_val
